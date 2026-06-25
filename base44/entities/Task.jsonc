@@ -1,0 +1,74 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "client_id": {
+      "type": "string",
+      "description": "ID del cliente relacionado"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Nombre del cliente"
+    },
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "ddjj_iva",
+        "ddjj_iibb",
+        "ddjj_ganancias",
+        "monotributo",
+        "sueldos",
+        "sociedades",
+        "audit",
+        "general",
+        "vencimiento"
+      ],
+      "default": "general"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "review",
+        "completed",
+        "overdue"
+      ],
+      "default": "pending"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "urgent"
+      ],
+      "default": "medium"
+    },
+    "assigned_to": {
+      "type": "string"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "completed_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo fiscal"
+    }
+  },
+  "required": [
+    "title"
+  ]
+}

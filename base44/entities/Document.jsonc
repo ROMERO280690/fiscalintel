@@ -1,0 +1,123 @@
+{
+  "name": "Document",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string",
+      "description": "ID del cliente"
+    },
+    "title": {
+      "type": "string"
+    },
+    "file_url": {
+      "type": "string",
+      "description": "URL del archivo"
+    },
+    "doc_type": {
+      "type": "string",
+      "enum": [
+        "factura_a",
+        "factura_b",
+        "factura_c",
+        "nota_credito",
+        "nota_debito",
+        "recibo",
+        "ticket",
+        "contrato",
+        "ddjj",
+        "certificado",
+        "otro"
+      ],
+      "description": "Tipo de comprobante"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "iva_compras",
+        "iva_ventas",
+        "iibb",
+        "monotributo",
+        "sueldos",
+        "sociedades",
+        "general"
+      ],
+      "default": "general"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "uploaded",
+        "processing",
+        "classified",
+        "reviewed",
+        "approved",
+        "rejected"
+      ],
+      "default": "uploaded"
+    },
+    "ai_classification": {
+      "type": "string",
+      "description": "Clasificaci\u00f3n autom\u00e1tica por IA"
+    },
+    "ai_extracted_data": {
+      "type": "string",
+      "description": "Datos extra\u00eddos por IA (JSON)"
+    },
+    "ai_confidence": {
+      "type": "number",
+      "description": "Confianza de la IA 0-100"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monto total"
+    },
+    "tax_amount": {
+      "type": "number",
+      "description": "Monto de impuestos"
+    },
+    "net_amount": {
+      "type": "number",
+      "description": "Monto neto"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha del comprobante"
+    },
+    "cae_number": {
+      "type": "string",
+      "description": "N\u00famero CAE"
+    },
+    "point_of_sale": {
+      "type": "string",
+      "description": "Punto de venta"
+    },
+    "invoice_number": {
+      "type": "string",
+      "description": "N\u00famero de comprobante"
+    },
+    "issuer_cuit": {
+      "type": "string",
+      "description": "CUIT del emisor"
+    },
+    "issuer_name": {
+      "type": "string",
+      "description": "Nombre del emisor"
+    },
+    "reviewed_by": {
+      "type": "string",
+      "description": "Revisado por"
+    },
+    "review_notes": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo fiscal (MM/YYYY)"
+    }
+  },
+  "required": [
+    "client_id",
+    "title"
+  ]
+}

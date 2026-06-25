@@ -1,0 +1,112 @@
+{
+  "name": "Client",
+  "type": "object",
+  "properties": {
+    "business_name": {
+      "type": "string",
+      "description": "Raz\u00f3n social"
+    },
+    "fantasy_name": {
+      "type": "string",
+      "description": "Nombre de fantas\u00eda"
+    },
+    "cuit": {
+      "type": "string",
+      "description": "CUIT/CUIL"
+    },
+    "client_type": {
+      "type": "string",
+      "enum": [
+        "monotributista",
+        "responsable_inscripto",
+        "autonomo",
+        "sas",
+        "srl",
+        "sa",
+        "cooperativa",
+        "agro",
+        "pyme"
+      ],
+      "description": "Tipo de contribuyente"
+    },
+    "tax_category": {
+      "type": "string",
+      "description": "Categor\u00eda impositiva"
+    },
+    "activity": {
+      "type": "string",
+      "description": "Actividad principal"
+    },
+    "activity_code": {
+      "type": "string",
+      "description": "C\u00f3digo de actividad ARCA"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "postal_code": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active"
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "low"
+    },
+    "compliance_score": {
+      "type": "number",
+      "default": 100,
+      "description": "\u00cdndice de cumplimiento 0-100"
+    },
+    "assigned_to": {
+      "type": "string",
+      "description": "Contador asignado"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "iibb_number": {
+      "type": "string",
+      "description": "N\u00famero de Ingresos Brutos"
+    },
+    "monotributo_category": {
+      "type": "string",
+      "description": "Categor\u00eda de Monotributo"
+    },
+    "fiscal_start_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "business_name",
+    "cuit",
+    "client_type"
+  ]
+}
