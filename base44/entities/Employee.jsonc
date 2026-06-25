@@ -1,0 +1,92 @@
+{
+  "name": "Employee",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "full_name": {
+      "type": "string"
+    },
+    "cuil": {
+      "type": "string"
+    },
+    "dni": {
+      "type": "string"
+    },
+    "position": {
+      "type": "string"
+    },
+    "category": {
+      "type": "string"
+    },
+    "agreement": {
+      "type": "string",
+      "description": "Convenio colectivo"
+    },
+    "hire_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "termination_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "terminated"
+      ],
+      "default": "active"
+    },
+    "base_salary": {
+      "type": "number"
+    },
+    "hours_type": {
+      "type": "string",
+      "enum": [
+        "full_time",
+        "part_time",
+        "hours"
+      ],
+      "default": "full_time"
+    },
+    "bank": {
+      "type": "string"
+    },
+    "cbu": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "art": {
+      "type": "string"
+    },
+    "obra_social": {
+      "type": "string"
+    },
+    "afiliacion_sindical": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "full_name",
+    "cuil"
+  ]
+}

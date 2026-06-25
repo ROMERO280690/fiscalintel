@@ -24,6 +24,9 @@ import Documents from '@/pages/Documents';
 import Tasks from '@/pages/Tasks';
 import TaxFilings from '@/pages/TaxFilings';
 import AIAssistant from '@/pages/AIAssistant';
+import Payroll from '@/pages/Payroll';
+import Accounting from '@/pages/Accounting';
+import TaxCalendar from '@/pages/TaxCalendar';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -62,6 +65,9 @@ const AuthenticatedApp = () => {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/tax-filings" element={<TaxFilings />} />
           <Route path="/ai-assistant" element={<AIAssistant />} />
+          <Route path="/payroll" element={<Payroll />} />
+          <Route path="/accounting" element={<Accounting />} />
+          <Route path="/tax-calendar" element={<TaxCalendar />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

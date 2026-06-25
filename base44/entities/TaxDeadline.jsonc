@@ -1,0 +1,63 @@
+{
+  "name": "TaxDeadline",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "obligation_type": {
+      "type": "string",
+      "enum": [
+        "iva",
+        "iibb",
+        "monotributo",
+        "autonomos",
+        "ganancias",
+        "bienes_personales",
+        "sueldos",
+        "f931",
+        "sociedades",
+        "municipal",
+        "otro"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "amount_estimated": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "overdue",
+        "waived"
+      ],
+      "default": "pending"
+    },
+    "alert_sent": {
+      "type": "boolean",
+      "default": false
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "obligation_type",
+    "due_date"
+  ]
+}

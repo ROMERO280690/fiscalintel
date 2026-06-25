@@ -1,0 +1,79 @@
+{
+  "name": "Payslip",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "employee_id": {
+      "type": "string"
+    },
+    "employee_name": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string"
+    },
+    "base_salary": {
+      "type": "number"
+    },
+    "overtime_hours": {
+      "type": "number"
+    },
+    "overtime_amount": {
+      "type": "number"
+    },
+    "bonuses": {
+      "type": "number"
+    },
+    "sac": {
+      "type": "number"
+    },
+    "gross_salary": {
+      "type": "number"
+    },
+    "jubilacion": {
+      "type": "number"
+    },
+    "obra_social_employee": {
+      "type": "number"
+    },
+    "anssal": {
+      "type": "number"
+    },
+    "sindical": {
+      "type": "number"
+    },
+    "total_deductions": {
+      "type": "number"
+    },
+    "net_salary": {
+      "type": "number"
+    },
+    "employer_contributions": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "ai_generated",
+        "approved",
+        "paid"
+      ],
+      "default": "draft"
+    },
+    "ai_notes": {
+      "type": "string"
+    },
+    "payment_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "client_id",
+    "employee_id",
+    "period"
+  ]
+}

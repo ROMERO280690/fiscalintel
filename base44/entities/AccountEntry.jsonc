@@ -1,0 +1,72 @@
+{
+  "name": "AccountEntry",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "entry_number": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "account_debit": {
+      "type": "string"
+    },
+    "account_credit": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "period": {
+      "type": "string"
+    },
+    "entry_type": {
+      "type": "string",
+      "enum": [
+        "compra",
+        "venta",
+        "pago",
+        "cobro",
+        "ajuste",
+        "apertura",
+        "cierre",
+        "sueldo",
+        "impuesto",
+        "otro"
+      ],
+      "default": "otro"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "posted",
+        "reversed"
+      ],
+      "default": "draft"
+    },
+    "ai_suggested": {
+      "type": "boolean",
+      "default": false
+    },
+    "document_id": {
+      "type": "string"
+    },
+    "reference": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "date",
+    "description",
+    "amount"
+  ]
+}

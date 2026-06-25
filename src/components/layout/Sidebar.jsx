@@ -26,22 +26,27 @@ const navSections = [
   {
     label: "Impuestos",
     items: [
-      { icon: Receipt, label: "IVA", path: "/tax-filings" },
-      { icon: Calculator, label: "Monotributo", path: "/tax-filings?type=monotributo" },
-      { icon: Building2, label: "IIBB", path: "/tax-filings?type=iibb" },
+      { icon: Receipt, label: "DDJJ / IVA", path: "/tax-filings" },
+      { icon: Calculator, label: "Vencimientos", path: "/tax-calendar" },
     ]
   },
   {
-    label: "Control",
+    label: "Laboral",
     items: [
-      { icon: Shield, label: "Auditoría Fiscal", path: "/tax-filings?type=audit" },
-      { icon: AlertTriangle, label: "Riesgo Tributario", path: "/tax-filings?type=risk" },
+      { icon: Building2, label: "Sueldos & F931", path: "/payroll" },
+    ]
+  },
+  {
+    label: "Contabilidad",
+    items: [
+      { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
     ]
   },
   {
     label: "IA",
     items: [
       { icon: Bot, label: "Asistente IA", path: "/ai-assistant" },
+      { icon: Shield, label: "Auditoría Fiscal", path: "/tax-filings" },
     ]
   }
 ];
