@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, FileText, FolderOpen, Receipt,
   Building2, Calculator, ClipboardList, Shield, AlertTriangle,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
-  Bot, Menu, X
+  Bot, Menu, X, Inbox
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
@@ -13,6 +13,7 @@ const navSections = [
     label: "Principal",
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
+      { icon: Inbox, label: "Bandeja de Revisión", path: "/review" },
       { icon: Users, label: "Clientes", path: "/clients" },
       { icon: CheckSquare, label: "Tareas", path: "/tasks" },
     ]
