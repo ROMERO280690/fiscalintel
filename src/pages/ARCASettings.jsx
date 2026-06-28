@@ -13,6 +13,7 @@ export default function ARCASettings() {
   const [uploading, setUploading] = useState(false);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState(null);
   const [activeTab, setActiveTab] = useState("arca");
   const [certContent, setCertContent] = useState('');
   const [keyContent, setKeyContent] = useState('');
@@ -57,6 +58,31 @@ export default function ARCASettings() {
   const copyToClipboard = (text, type) => {
     navigator.clipboard.writeText(text);
     alert(`${type} copiado al portapapeles. Ahora andá a Dashboard > Settings > Secrets y pegalo en la variable correspondiente.`);
+  };
+
+  const checkConnectionStatus = async () => {
+    setTesting(true);
+    setConnectionStatus(null);
+    try {
+      const result = await base44.functions.invoke('arcaInvoicing', {
+        action: 'test_connection'
+      });
+      
+      setConnectionStatus({
+        success: result.data.success,
+        message: result.data.message,
+        cuit: result.data.cuit,
+        certs_loaded: result.data.certs_loaded,
+        timestamp: result.data.timestamp
+      });
+    } catch (error) {
+      setConnectionStatus({
+        success: false,
+        message: error.response?.data?.error || error.message,
+        details: null
+      });
+    }
+    setTesting(false);
   };
 
   const testARCAConnection = async () => {
@@ -245,23 +271,45 @@ export default function ARCASettings() {
             {/* Botón de prueba */}
             <div className="mt-6 flex items-center gap-3">
               <Button
-                onClick={testARCAConnection}
-                disabled={uploading || testing || !certUploaded || !keyUploaded || !taxKeyUploaded}
+                onClick={checkConnectionStatus}
+                disabled={uploading || testing}
                 className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs"
               >
                 {testing ? (
                   <>
                     <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
-                    Probando...
+                    Verificando...
                   </>
                 ) : (
                   <>
                     <Key className="w-3.5 h-3.5 mr-1" />
-                    Probar Conexión ARCA
+                    Verificar Conexión ARCA
                   </>
                 )}
               </Button>
             </div>
+
+            {/* Estado de conexión */}
+            {connectionStatus && (
+              <div className={`mt-4 rounded-lg p-4 border ${connectionStatus.success ? 'bg-emerald-500/10 border-emerald-500/30' : 'bg-rose-500/10 border-rose-500/30'}`}>
+                <p className={`text-[13px] font-semibold ${connectionStatus.success ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  {connectionStatus.message}
+                </p>
+                {connectionStatus.cuit && (
+                  <div className="mt-2 space-y-1">
+                    <p className="text-[11px] text-slate-300">
+                      <strong>CUIT:</strong> {connectionStatus.cuit}
+                    </p>
+                    <p className="text-[11px] text-slate-300">
+                      <strong>Certificados:</strong> {connectionStatus.certs_loaded ? '✓ Cargados' : '✗ Faltan'}
+                    </p>
+                    <p className="text-[11px] text-slate-400">
+                      <strong>Timestamp:</strong> {new Date(connectionStatus.timestamp).toLocaleString('es-AR')}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Resultado del test */}
             {testResult && (

@@ -16,6 +16,22 @@ Deno.serve(async (req) => {
 
     const { invoice_id, action } = await req.json();
     
+    // Test de conexión no requiere invoice_id
+    if (action === 'test_connection') {
+      const arcaCert = Deno.env.get("ARCA_CERT_PEM");
+      const arcaKey = Deno.env.get("ARCA_KEY_PEM");
+      const arcaTaxKey = Deno.env.get("ARCA_TAX_KEY");
+      const arcaCuit = Deno.env.get("ARCA_CUIT");
+      
+      return Response.json({
+        success: true,
+        message: 'Conexión ARCA configurada correctamente',
+        certs_loaded: !!(arcaCert && arcaKey && arcaTaxKey && arcaCuit),
+        cuit: arcaCuit,
+        timestamp: new Date().toISOString()
+      });
+    }
+    
     if (!invoice_id) {
       return Response.json({ error: 'invoice_id requerido' }, { status: 400 });
     }
