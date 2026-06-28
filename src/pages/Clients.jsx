@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { logAction } from "@/lib/audit";
 import { Plus, Search, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,8 +55,10 @@ export default function Clients() {
   const handleSave = async (data) => {
     if (editingClient) {
       await base44.entities.Client.update(editingClient.id, data);
+      logAction("update", `Editó cliente: ${data.business_name}`, { entityType: "Client", entityId: editingClient.id, clientId: editingClient.id, clientName: data.business_name, oldData: { business_name: editingClient.business_name, cuit: editingClient.cuit }, newData: { business_name: data.business_name, cuit: data.cuit }, module: "Clientes" });
     } else {
-      await base44.entities.Client.create(data);
+      const created = await base44.entities.Client.create(data);
+      logAction("create", `Creó cliente: ${data.business_name} (CUIT: ${data.cuit})`, { entityType: "Client", entityId: created?.id, clientId: created?.id, clientName: data.business_name, newData: { business_name: data.business_name, cuit: data.cuit, client_type: data.client_type }, module: "Clientes" });
     }
     setShowForm(false);
     setEditingClient(null);
@@ -63,7 +66,9 @@ export default function Clients() {
   };
 
   const handleDelete = async (id) => {
+    const client = clients.find(c => c.id === id);
     await base44.entities.Client.delete(id);
+    logAction("delete", `Eliminó cliente: ${client?.business_name} (CUIT: ${client?.cuit})`, { entityType: "Client", entityId: id, clientId: id, clientName: client?.business_name, oldData: { business_name: client?.business_name, cuit: client?.cuit }, module: "Clientes" });
     setSelectedClient(null);
     loadClients();
   };

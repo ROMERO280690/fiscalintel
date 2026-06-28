@@ -4,6 +4,7 @@ import {
   CheckCircle, XCircle, Eye, FileText, Receipt, Users,
   BookOpen, ChevronDown, ChevronUp, Bot, Loader2, Edit2, Save
 } from "lucide-react";
+import { logAction } from "@/lib/audit";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
@@ -139,6 +140,7 @@ export default function Review() {
     try {
       const updates = { status: item.type === "asiento" ? "posted" : "approved" };
       await base44.entities[item.entity].update(item.id, updates);
+      logAction("approve", `Aprobó ${item.type}: ${item.title}`, { entityType: item.entity, entityId: item.id, clientId: item.raw?.client_id, clientName: item.subtitle, oldData: { status: item.raw?.status }, newData: updates, module: "Bandeja de Revisión" });
       load();
     } catch (e) { console.error(e); }
     finally { setApproving(null); }
@@ -149,6 +151,7 @@ export default function Review() {
     try {
       const updates = { status: item.type === "documento" ? "rejected" : "draft" };
       await base44.entities[item.entity].update(item.id, updates);
+      logAction("reject", `Rechazó ${item.type}: ${item.title}`, { entityType: item.entity, entityId: item.id, clientId: item.raw?.client_id, clientName: item.subtitle, oldData: { status: item.raw?.status }, newData: updates, module: "Bandeja de Revisión" });
       load();
     } catch (e) { console.error(e); }
     finally { setApproving(null); }

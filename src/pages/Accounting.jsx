@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { logAction } from "@/lib/audit";
 import { Plus, BookOpen, Bot, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -166,7 +167,7 @@ Respondé con un array de asientos.`,
                         <div className="flex items-center gap-1">
                           <StatusBadge status={entry.status} />
                           {entry.status === "draft" && (
-                            <button onClick={async () => { await base44.entities.AccountEntry.update(entry.id, { status: "posted" }); load(); }}
+                            <button onClick={async () => { await base44.entities.AccountEntry.update(entry.id, { status: "posted" }); logAction("approve", `Asentó asiento contable: ${entry.description}`, { entityType: "AccountEntry", entityId: entry.id, clientId: entry.client_id, oldData: { status: "draft" }, newData: { status: "posted" }, module: "Contabilidad" }); load(); }}
                               className="text-[10px] text-[#00C7D9] hover:underline ml-1">Asentar</button>
                           )}
                         </div>
@@ -221,7 +222,7 @@ Respondé con un array de asientos.`,
         </div>
       )}
 
-      {showForm && <EntryForm clients={clients} onSave={async (data) => { await base44.entities.AccountEntry.create(data); setShowForm(false); load(); }} onClose={() => setShowForm(false)} />}
+      {showForm && <EntryForm clients={clients} onSave={async (data) => { const entry = await base44.entities.AccountEntry.create(data); logAction("create", `Creó asiento: ${data.description} — $${data.amount}`, { entityType: "AccountEntry", entityId: entry?.id, clientId: data.client_id, newData: { description: data.description, account_debit: data.account_debit, account_credit: data.account_credit, amount: data.amount }, module: "Contabilidad" }); setShowForm(false); load(); }} onClose={() => setShowForm(false)} />}
     </div>
   );
 }

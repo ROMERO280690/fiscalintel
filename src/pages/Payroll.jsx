@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { logAction } from "@/lib/audit";
 import { Plus, Users, Loader2, Bot, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -74,7 +75,7 @@ Respondé en JSON con todos los montos.`,
         }
       });
 
-      await base44.entities.Payslip.create({
+      const ps = await base44.entities.Payslip.create({
         client_id: employee.client_id,
         employee_id: employee.id,
         employee_name: employee.full_name,
@@ -92,6 +93,7 @@ Respondé en JSON con todos los montos.`,
         ai_notes: result.ai_notes || "",
         status: "ai_generated",
       });
+      logAction("ai_run", `Generó recibo de sueldo IA: ${employee.full_name} — Período ${period}`, { entityType: "Payslip", entityId: ps?.id, clientId: employee.client_id, newData: { employee: employee.full_name, period, net_salary: result.net_salary }, module: "Sueldos" });
       load();
       setActiveTab("Liquidaciones");
     } catch (e) { console.error(e); }
@@ -175,7 +177,7 @@ Respondé en JSON con todos los montos.`,
                     <div className="flex items-center gap-2">
                       <StatusBadge status={ps.status} />
                       {ps.status === "ai_generated" && (
-                        <Button size="sm" onClick={async () => { await base44.entities.Payslip.update(ps.id, { status: "approved" }); load(); }}
+                        <Button size="sm" onClick={async () => { await base44.entities.Payslip.update(ps.id, { status: "approved" }); logAction("approve", `Aprobó recibo de sueldo: ${ps.employee_name} — ${ps.period}`, { entityType: "Payslip", entityId: ps.id, clientId: ps.client_id, newData: { status: "approved" }, module: "Sueldos" }); load(); }}
                           className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] h-7 px-2">
                           <CheckCircle className="w-3 h-3 mr-1" />Aprobar
                         </Button>
@@ -198,7 +200,7 @@ Respondé en JSON con todos los montos.`,
         <F931View payslips={payslips} clients={clients} />
       )}
 
-      {showEmpForm && <EmployeeForm clients={clients} onSave={async (data) => { await base44.entities.Employee.create(data); setShowEmpForm(false); load(); }} onClose={() => setShowEmpForm(false)} />}
+      {showEmpForm && <EmployeeForm clients={clients} onSave={async (data) => { const emp = await base44.entities.Employee.create(data); logAction("create", `Creó empleado: ${data.full_name} (CUIL: ${data.cuil})`, { entityType: "Employee", entityId: emp?.id, clientId: data.client_id, newData: { full_name: data.full_name, cuil: data.cuil, base_salary: data.base_salary }, module: "Sueldos" }); setShowEmpForm(false); load(); }} onClose={() => setShowEmpForm(false)} />}
     </div>
   );
 }

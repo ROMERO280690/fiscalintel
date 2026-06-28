@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { logAction } from "@/lib/audit";
 import { Plus, Search, Receipt, Bot, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,11 +50,12 @@ export default function TaxFilings() {
 
   const handleCreate = async (data) => {
     const client = clients.find(c => c.id === data.client_id);
-    await base44.entities.TaxFiling.create({
+    const filing = await base44.entities.TaxFiling.create({
       ...data,
       client_name: client?.business_name || "",
       status: "draft",
     });
+    logAction("create", `Creó DDJJ ${filingTypeLabels[data.filing_type]} período ${data.period} — ${client?.business_name}`, { entityType: "TaxFiling", entityId: filing?.id, clientId: data.client_id, clientName: client?.business_name, newData: { filing_type: data.filing_type, period: data.period }, module: "DDJJ" });
     setShowForm(false);
     load();
   };
@@ -93,6 +95,7 @@ export default function TaxFilings() {
         ai_notes: result.ai_notes || "",
         ai_risk_flags: result.risk_flags || "",
       });
+      logAction("ai_run", `IA calculó DDJJ ${filingTypeLabels[filing.filing_type]} ${filing.period} — ${filing.client_name} → $${result.tax_payable || 0}`, { entityType: "TaxFiling", entityId: filing.id, clientId: filing.client_id, clientName: filing.client_name, newData: { tax_payable: result.tax_payable, status: "ai_generated" }, module: "DDJJ" });
       load();
     } catch (e) {
       console.error(e);
@@ -174,7 +177,7 @@ export default function TaxFilings() {
                   {(filing.status === "ai_generated" || filing.status === "review") && (
                     <Button
                       size="sm"
-                      onClick={async () => { await base44.entities.TaxFiling.update(filing.id, { status: "approved" }); load(); }}
+                      onClick={async () => { await base44.entities.TaxFiling.update(filing.id, { status: "approved" }); logAction("approve", `Aprobó DDJJ ${filingTypeLabels[filing.filing_type]} ${filing.period} — ${filing.client_name}`, { entityType: "TaxFiling", entityId: filing.id, clientId: filing.client_id, clientName: filing.client_name, oldData: { status: filing.status }, newData: { status: "approved" }, module: "DDJJ" }); load(); }}
                       className="bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] h-7 px-2"
                     >
                       Aprobar

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { logAction } from "@/lib/audit";
 import { Plus, Search, Upload, FileText, Bot, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -49,12 +50,14 @@ export default function Documents() {
 
   const handleApprove = async (doc) => {
     await base44.entities.Document.update(doc.id, { status: "approved" });
+    logAction("approve", `Aprobó documento: ${doc.title}`, { entityType: "Document", entityId: doc.id, clientId: doc.client_id, oldData: { status: doc.status }, newData: { status: "approved" }, module: "Expediente Digital" });
     load();
     setSelectedDoc(null);
   };
 
   const handleReject = async (doc) => {
     await base44.entities.Document.update(doc.id, { status: "rejected" });
+    logAction("reject", `Rechazó documento: ${doc.title}`, { entityType: "Document", entityId: doc.id, clientId: doc.client_id, oldData: { status: doc.status }, newData: { status: "rejected" }, module: "Expediente Digital" });
     load();
     setSelectedDoc(null);
   };
