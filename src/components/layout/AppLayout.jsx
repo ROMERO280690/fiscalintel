@@ -13,7 +13,7 @@ export default function AppLayout() {
         {isDashboard ? (
           <Outlet />
         ) : (
-          <div className="p-4 lg:p-6 pt-14 lg:pt-6">
+          <div className="p-4 lg:p-6">
             <Outlet />
           </div>
         )}
