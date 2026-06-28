@@ -10,6 +10,7 @@ const statusConfig = {
   critical: { label: "Crítico", className: "bg-rose-50 text-rose-700 border-rose-200" },
   urgent: { label: "Urgente", className: "bg-rose-50 text-rose-700 border-rose-200" },
   pending: { label: "Pendiente", className: "bg-amber-50 text-amber-700 border-amber-200" },
+  pending_review: { label: "Pend. Revisión", className: "bg-amber-50 text-amber-700 border-amber-300" },
   in_progress: { label: "En Progreso", className: "bg-blue-50 text-blue-700 border-blue-200" },
   review: { label: "Revisión", className: "bg-purple-50 text-purple-700 border-purple-200" },
   completed: { label: "Completada", className: "bg-emerald-50 text-emerald-700 border-emerald-200" },

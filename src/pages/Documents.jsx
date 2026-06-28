@@ -5,7 +5,7 @@ import { useCompanyData } from "@/hooks/useCompanyData";
 import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
-import { Plus, Search, Upload, FileText, Bot, CheckCircle, XCircle } from "lucide-react";
+import { Search, Upload, FileText, Bot, CheckCircle, XCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
@@ -36,19 +36,23 @@ export default function Documents() {
 
   const filtered = documents.filter(d => {
     const matchSearch = !search || d.title?.toLowerCase().includes(search.toLowerCase()) || d.issuer_name?.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = !statusFilter || d.status === statusFilter;
+    const matchStatus = !statusFilter || d.status === statusFilter ||
+      (statusFilter === "processing" && d.status === "classified"); // backward compat
     return matchSearch && matchStatus;
   });
 
-  const handleApprove = async (doc) => {
-    await base44.entities.Document.update(doc.id, { status: "approved" });
+  const handleApprove = async (doc, correctedFields = {}) => {
+    await base44.entities.Document.update(doc.id, {
+      status: "approved",
+      ...correctedFields,
+    });
     logAction("approve", `Aprobó documento: ${doc.title}`, { entityType: "Document", entityId: doc.id, clientId: doc.client_id, oldData: { status: doc.status }, newData: { status: "approved" }, module: "Expediente Digital" });
     load();
     setSelectedDoc(null);
   };
 
-  const handleReject = async (doc) => {
-    await base44.entities.Document.update(doc.id, { status: "rejected" });
+  const handleReject = async (doc, notes) => {
+    await base44.entities.Document.update(doc.id, { status: "rejected", review_notes: notes || "" });
     logAction("reject", `Rechazó documento: ${doc.title}`, { entityType: "Document", entityId: doc.id, clientId: doc.client_id, oldData: { status: doc.status }, newData: { status: "rejected" }, module: "Expediente Digital" });
     load();
     setSelectedDoc(null);
@@ -72,17 +76,36 @@ export default function Documents() {
         </Button>
       </PageHeader>
 
+      {/* Banner pendientes de revisión */}
+      {documents.filter(d => d.status === "pending_review").length > 0 && (
+        <div
+          onClick={() => setStatusFilter("pending_review")}
+          className="mb-4 flex items-center gap-3 bg-amber-50 border border-amber-300 rounded-xl px-4 py-3 cursor-pointer hover:bg-amber-100 transition-colors"
+        >
+          <Clock className="w-5 h-5 text-amber-500 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-[13px] font-bold text-amber-800">
+              {documents.filter(d => d.status === "pending_review").length} documento(s) esperando aprobación del contador
+            </p>
+            <p className="text-[11px] text-amber-600">La IA los procesó. Revisá y aprobá antes de usarlos en DDJJ.</p>
+          </div>
+          <span className="text-[12px] font-semibold text-amber-700 bg-amber-200 rounded-full px-3 py-1">
+            Revisar →
+          </span>
+        </div>
+      )}
+
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {[
-          { label: "Cargados", status: "uploaded", count: documents.filter(d => d.status === "uploaded").length },
-          { label: "Procesando IA", status: "processing", count: documents.filter(d => d.status === "processing" || d.status === "classified").length },
+          { label: "Pendiente Revisión", status: "pending_review", count: documents.filter(d => d.status === "pending_review").length },
+          { label: "Procesando IA", status: "processing", count: documents.filter(d => d.status === "processing").length },
           { label: "Aprobados", status: "approved", count: documents.filter(d => d.status === "approved").length },
           { label: "Rechazados", status: "rejected", count: documents.filter(d => d.status === "rejected").length },
         ].map(s => (
           <button
             key={s.status}
             onClick={() => setStatusFilter(statusFilter === s.status ? "" : s.status)}
-            className={`p-3 rounded-xl text-left transition-all ${statusFilter === s.status ? "bg-[#00C7D9]/10 border-[#00C7D9] border-2" : "bg-white border border-slate-100 hover:border-slate-200"}`}
+            className={`p-3 rounded-xl text-left transition-all ${statusFilter === s.status ? "bg-[#00C7D9]/10 border-[#00C7D9] border-2" : s.status === "pending_review" && s.count > 0 ? "bg-amber-50 border border-amber-300" : "bg-white border border-slate-100 hover:border-slate-200"}`}
           >
             <p className="text-lg font-bold text-[#1A1A2E]">{s.count}</p>
             <p className="text-[11px] text-slate-500">{s.label}</p>

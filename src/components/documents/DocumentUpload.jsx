@@ -71,7 +71,7 @@ export default function DocumentUpload({ clients, onClose, onComplete }) {
 
         if (aiResult) {
           await base44.entities.Document.update(created.id, {
-            status: "classified",
+            status: "pending_review",
             doc_type: aiResult.doc_type || "otro",
             amount: aiResult.amount || 0,
             net_amount: aiResult.net_amount || 0,
@@ -148,9 +148,9 @@ export default function DocumentUpload({ clients, onClose, onComplete }) {
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-[11px] text-slate-500 bg-slate-50 rounded-lg px-3 py-2.5">
-            <Bot className="w-4 h-4 text-[#00C7D9]" />
-            <span>La IA clasificará y extraerá datos de cada documento automáticamente.</span>
+          <div className="flex items-center gap-2 text-[11px] text-slate-500 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+            <Bot className="w-4 h-4 text-amber-500" />
+            <span>La IA clasificará los datos. Cada documento requerirá <strong>aprobación manual</strong> del contador antes de quedar finalizado.</span>
           </div>
 
           <div className="flex justify-end gap-2">
