@@ -36,11 +36,24 @@ export default function TaxAutomation() {
   
   // Vencimientos
   const [deadlines, setDeadlines] = useState([]);
+  
+  // Estado ARCA
+  const [arcoStatus, setArcoStatus] = useState(null);
+
+  const checkARCAStatus = async () => {
+    try {
+      const res = await base44.functions.invoke('arcaInvoicing', { action: 'test_connection' });
+      setArcoStatus(res.data);
+    } catch (e) {
+      setArcoStatus({ success: false, message: 'Offline' });
+    }
+  };
 
   useEffect(() => {
     if (selectedCompany) {
       loadClients();
       loadDeadlines();
+      checkARCAStatus();
     }
   }, [selectedCompany]);
 
@@ -312,8 +325,15 @@ export default function TaxAutomation() {
     <div className="p-6">
       <PageHeader 
         title="Automatización Fiscal" 
-        subtitle="Contador automático - Presentaciones AFIP"
+        subtitle={arcoStatus?.success ? "ARCA: conectado" : "ARCA: modo offline (presentación manual)"}
       >
+        <div className="flex gap-2">
+          {arcoStatus && (
+            <span className={`text-[11px] px-2 py-1 rounded-full ${arcoStatus.success ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+              {arcoStatus.success ? '● Online' : '● Offline'}
+            </span>
+          )}
+        </div>
         <Button 
           onClick={submitAll}
           disabled={!selectedClient || loading}

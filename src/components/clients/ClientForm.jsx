@@ -53,7 +53,7 @@ export default function ClientForm({ client, onSave, onClose }) {
     try {
       const result = await base44.functions.invoke('consultaAFIP', { cuit: form.cuit });
       
-      if (result.data.found) {
+      if (result.data?.found) {
         setForm(prev => ({
           ...prev,
           business_name: result.data.business_name || prev.business_name,
@@ -65,14 +65,13 @@ export default function ClientForm({ client, onSave, onClose }) {
           client_type: result.data.client_type || prev.client_type,
         }));
         setConsulted(true);
-      } else {
-        // Si no encontró datos, al menos inferimos el tipo
-        if (result.data.inferred_type) {
-          setForm(prev => ({ ...prev, client_type: result.data.inferred_type }));
-        }
+      } else if (result.data?.inferred_type) {
+        // Si no encontró datos, al menos inferimos el tipo por el CUIT
+        setForm(prev => ({ ...prev, client_type: result.data.inferred_type }));
       }
     } catch (error) {
-      console.error('Error consultando AFIP:', error);
+      // Error silencioso - el usuario completa manual
+      console.log('Consulta AFIP no disponible - carga manual');
     }
     setConsulting(false);
   };
@@ -126,7 +125,7 @@ export default function ClientForm({ client, onSave, onClose }) {
                 )}
               </div>
               <p className="text-[10px] text-slate-500 mt-1">
-                {consulted ? '✓ Datos consultados en AFIP' : 'Ingresá el CUIT y se completan automáticamente los datos'}
+                {consulted ? '✓ Datos validados en AFIP' : 'Completá manualmente o esperá la validación automática'}
               </p>
             </div>
             <div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
-import { Plus, Search, FileText, Bot, Loader2, Download, X, CheckCircle } from "lucide-react";
+import { Plus, Search, FileText, Bot, Loader2, Download, X, CheckCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
@@ -184,6 +184,17 @@ export default function Invoicing() {
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [generandoCAE, setGenerandoCAE] = useState(null);
+  const [arcoStatus, setArcoStatus] = useState(null);
+
+  const checkARCAStatus = async () => {
+    try {
+      const res = await base44.functions.invoke('arcaInvoicing', { action: 'test_connection' });
+      setArcoStatus(res.data);
+    } catch (e) {
+      setArcoStatus({ success: false, message: 'No disponible' });
+    }
+  };
 
   const load = async () => {
     const [inv, cls] = await Promise.all([
@@ -191,9 +202,26 @@ export default function Invoicing() {
       base44.entities.Client.list("-created_date", 200),
     ]);
     setInvoices(inv); setClients(cls); setLoading(false);
+    checkARCAStatus();
   };
 
   useEffect(() => { load(); }, []);
+
+  const generarCAE = async (invoiceId) => {
+    setGenerandoCAE(invoiceId);
+    try {
+      const res = await base44.functions.invoke('arcaInvoicing', { invoice_id: invoiceId, action: 'generate_cae' });
+      if (res.data.success) {
+        alert(`CAE generado: ${res.data.cae}\nVencimiento: ${res.data.vencimiento}\nModo: ${res.data.modo}`);
+        load();
+      } else {
+        alert('Error: ' + (res.data.error || 'No se pudo generar el CAE'));
+      }
+    } catch (error) {
+      alert('Error generando CAE: ' + error.message);
+    }
+    setGenerandoCAE(null);
+  };
 
   const handleSave = async (data) => {
     if (editing) {
@@ -223,10 +251,17 @@ export default function Invoicing() {
 
   return (
     <div>
-      <PageHeader title="Facturación Electrónica" subtitle="Gestión de comprobantes ARCA">
-        <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
-          <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Comprobante
-        </Button>
+      <PageHeader title="Facturación Electrónica" subtitle={arcoStatus?.success ? "ARCA: conectado" : "ARCA: modo offline (CAE manual)"}>
+        <div className="flex gap-2">
+          {arcoStatus && (
+            <span className={`text-[11px] px-2 py-1 rounded-full ${arcoStatus.success ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
+              {arcoStatus.success ? '● Online' : '● Offline'}
+            </span>
+          )}
+          <Button onClick={() => { setEditing(null); setShowForm(true); }} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
+            <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Comprobante
+          </Button>
+        </div>
       </PageHeader>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
@@ -271,6 +306,7 @@ export default function Invoicing() {
                   <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase hidden sm:table-cell">Receptor</th>
                   <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase hidden md:table-cell">Fecha</th>
                   <th className="text-right px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Total</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">CAE</th>
                   <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Estado</th>
                 </tr>
               </thead>
@@ -286,6 +322,22 @@ export default function Invoicing() {
                     <td className="px-4 py-3 text-[13px] text-slate-300 hidden md:table-cell font-mono">{inv.date || "—"}</td>
                     <td className="px-4 py-3 text-right text-[13px] font-bold text-white font-mono">
                       ${(inv.total_amount || 0).toLocaleString("es-AR")}
+                    </td>
+                    <td className="px-4 py-3">
+                      {inv.cae_number ? (
+                        <span className="text-[10px] font-mono text-emerald-400">{inv.cae_number}</span>
+                      ) : inv.status === 'issued' || inv.status === 'draft' ? (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); generarCAE(inv.id); }}
+                          disabled={generandoCAE === inv.id}
+                          className="text-[10px] flex items-center gap-1 bg-[#00C7D9] hover:bg-[#00A8BD] text-white px-2 py-1 rounded"
+                        >
+                          {generandoCAE === inv.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Zap className="w-3 h-3" />}
+                          Generar CAE
+                        </button>
+                      ) : (
+                        <span className="text-[10px] text-slate-500">—</span>
+                      )}
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={inv.status} /></td>
                   </tr>
