@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import React from "react";
 import { normalizeRole, ROLE_LABELS } from "@/lib/permissions";
+import { useAuth } from "@/lib/AuthContext";
 import DashboardSuperAdmin from "@/components/dashboard/DashboardSuperAdmin";
 import DashboardEstudio from "@/components/dashboard/DashboardEstudio";
 import DashboardContador from "@/components/dashboard/DashboardContador";
@@ -23,14 +23,9 @@ const DASHBOARD_BY_ROLE = {
 };
 
 export default function Dashboard() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoadingAuth } = useAuth();
 
-  useEffect(() => {
-    base44.auth.me().then(u => { setUser(u); setLoading(false); }).catch(() => setLoading(false));
-  }, []);
-
-  if (loading) return (
+  if (isLoadingAuth) return (
     <div className="min-h-screen bg-[#0A0B14] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
