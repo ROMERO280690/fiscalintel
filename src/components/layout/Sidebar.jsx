@@ -129,8 +129,8 @@ export default function Sidebar() {
       <div className="flex items-center justify-between p-4 border-b border-white/10">
         {!collapsed && (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#00C7D9] flex items-center justify-center">
-              <BarChart3 className="w-4.5 h-4.5 text-white" />
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center">
+              <span className="text-white font-bold text-sm">C</span>
             </div>
             <div>
               <h1 className="text-sm font-bold text-white tracking-tight">ContaIA</h1>
@@ -139,8 +139,8 @@ export default function Sidebar() {
           </div>
         )}
         {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-[#00C7D9] flex items-center justify-center mx-auto">
-            <BarChart3 className="w-4.5 h-4.5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center mx-auto">
+            <span className="text-white font-bold text-sm">C</span>
           </div>
         )}
         <button
@@ -174,12 +174,12 @@ export default function Sidebar() {
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 ${
                       active
-                        ? "bg-[#00C7D9]/15 text-[#00C7D9]"
+                        ? "bg-violet-500/15 text-violet-400 border border-violet-500/20"
                         : "text-slate-400 hover:text-white hover:bg-white/5"
                     }`}
                     title={collapsed ? item.label : undefined}
                   >
-                    <item.icon className={`w-4 h-4 flex-shrink-0 ${active ? "text-[#00C7D9]" : ""}`} />
+                    <item.icon className={`w-4 h-4 flex-shrink-0 ${active ? "text-violet-400" : ""}`} />
                     {!collapsed && <span>{item.label}</span>}
                   </Link>
                 );
@@ -193,7 +193,7 @@ export default function Sidebar() {
         {!collapsed && user && (
           <div className="px-2.5 py-1.5 mb-1">
             <p className="text-[11px] text-white font-medium truncate">{user.full_name || user.email}</p>
-            <span className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#00C7D9]/20 text-[#00C7D9] mt-0.5">
+            <span className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-violet-500/20 text-violet-400 mt-0.5">
               {roleLabel}
             </span>
           </div>
