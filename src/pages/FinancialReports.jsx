@@ -252,7 +252,7 @@ export default function FinancialReports() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-slate-200 border-t-[#00C7D9] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-white/10 border-t-[#00C7D9] rounded-full animate-spin" />
     </div>
   );
 
@@ -272,14 +272,14 @@ export default function FinancialReports() {
       </PageHeader>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-        <div className="lg:col-span-3 bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+        <div className="lg:col-span-3 bg-[#1A1A2E] rounded-xl p-4 shadow-sm border border-white/10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-[11px] font-medium text-slate-500 uppercase">Cliente</label>
+              <label className="text-[11px] font-medium text-slate-400 uppercase">Cliente</label>
               <select value={selectedClient} onChange={e => setSelectedClient(e.target.value)}
-                className="mt-1 w-full h-9 px-3 rounded-lg border border-slate-200 text-[13px] bg-white">
+                className="mt-1 w-full h-9 px-3 rounded-lg border border-white/10 text-[13px] bg-white/5 text-white">
                 <option value="">Seleccionar</option>
-                {clients.map(c => <option key={c.id} value={c.id}>{c.business_name}</option>)}
+                {clients.map(c => <option key={c.id} value={c.id} className="bg-[#1A1A2E] text-white">{c.business_name}</option>)}
               </select>
             </div>
             <div>
@@ -295,15 +295,15 @@ export default function FinancialReports() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-          <label className="text-[11px] font-medium text-slate-500 uppercase mb-2 block">Tipo de Reporte</label>
+        <div className="bg-[#1A1A2E] rounded-xl p-4 shadow-sm border border-white/10">
+          <label className="text-[11px] font-medium text-slate-400 uppercase mb-2 block">Tipo de Reporte</label>
           <div className="space-y-1">
             {reportTypes.map(rt => (
               <button key={rt.id} onClick={() => { setSelectedReport(rt.id); setReportData(null); }}
                 className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] transition-colors ${
                   selectedReport === rt.id 
                     ? "bg-[#00C7D9] text-white" 
-                    : "bg-slate-50 text-slate-600 hover:bg-slate-100"
+                    : "bg-white/5 text-slate-300 hover:bg-white/10"
                 }`}>
                 <rt.icon className="w-3.5 h-3.5" />
                 {rt.label}
@@ -323,60 +323,60 @@ export default function FinancialReports() {
       {!reportData ? (
         <EmptyState icon={FileText} title="Sin reporte generado" description="Seleccioná un cliente, período y tipo de reporte para generar." />
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-          <div className="p-4 border-b border-slate-100 bg-slate-50">
-            <h3 className="text-[15px] font-bold text-[#1A1A2E]">{reportData.title}</h3>
-            <p className="text-[12px] text-slate-500">{reportData.client} | {reportData.period}</p>
+        <div className="bg-[#1A1A2E] rounded-xl shadow-sm border border-white/10 overflow-hidden">
+          <div className="p-4 border-b border-white/10 bg-white/5">
+            <h3 className="text-[15px] font-bold text-white">{reportData.title}</h3>
+            <p className="text-[12px] text-slate-400">{reportData.client} | {reportData.period}</p>
           </div>
 
           <div className="p-4">
             {selectedReport === "balance_general" ? (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <h4 className="text-[13px] font-semibold text-[#1A1A2E] mb-2">ACTIVO</h4>
+                  <h4 className="text-[13px] font-semibold text-white mb-2">ACTIVO</h4>
                   <div className="space-y-1">
                     {reportData.data.activo.map((r, i) => (
                       <div key={i} className="flex justify-between text-[12px]">
-                        <span className="text-slate-600">{r.cuenta}</span>
-                        <span className="font-mono">${r.monto.toLocaleString("es-AR")}</span>
+                        <span className="text-slate-300">{r.cuenta}</span>
+                        <span className="font-mono text-white">${r.monto.toLocaleString("es-AR")}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 pt-2 border-t border-slate-200 font-bold text-[13px] flex justify-between">
-                    <span>Total Activo</span>
-                    <span className="font-mono">${reportData.totalActivo.toLocaleString("es-AR")}</span>
+                  <div className="mt-2 pt-2 border-t border-white/10 font-bold text-[13px] flex justify-between">
+                    <span className="text-white">Total Activo</span>
+                    <span className="font-mono text-white">${reportData.totalActivo.toLocaleString("es-AR")}</span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-[13px] font-semibold text-[#1A1A2E] mb-2">PASIVO</h4>
+                  <h4 className="text-[13px] font-semibold text-white mb-2">PASIVO</h4>
                   <div className="space-y-1">
                     {reportData.data.pasivo.map((r, i) => (
                       <div key={i} className="flex justify-between text-[12px]">
-                        <span className="text-slate-600">{r.cuenta}</span>
-                        <span className="font-mono">${r.monto.toLocaleString("es-AR")}</span>
+                        <span className="text-slate-300">{r.cuenta}</span>
+                        <span className="font-mono text-white">${r.monto.toLocaleString("es-AR")}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 pt-2 border-t border-slate-200 font-bold text-[13px] flex justify-between">
-                    <span>Total Pasivo</span>
-                    <span className="font-mono">${reportData.totalPasivo.toLocaleString("es-AR")}</span>
+                  <div className="mt-2 pt-2 border-t border-white/10 font-bold text-[13px] flex justify-between">
+                    <span className="text-white">Total Pasivo</span>
+                    <span className="font-mono text-white">${reportData.totalPasivo.toLocaleString("es-AR")}</span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 className="text-[13px] font-semibold text-[#1A1A2E] mb-2">PATRIMONIO</h4>
+                  <h4 className="text-[13px] font-semibold text-white mb-2">PATRIMONIO</h4>
                   <div className="space-y-1">
                     {reportData.data.patrimonio.map((r, i) => (
                       <div key={i} className="flex justify-between text-[12px]">
-                        <span className="text-slate-600">{r.cuenta}</span>
-                        <span className="font-mono">${r.monto.toLocaleString("es-AR")}</span>
+                        <span className="text-slate-300">{r.cuenta}</span>
+                        <span className="font-mono text-white">${r.monto.toLocaleString("es-AR")}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="mt-2 pt-2 border-t border-slate-200 font-bold text-[13px] flex justify-between">
-                    <span>Total Patrimonio</span>
-                    <span className="font-mono">${reportData.totalPatrimonio.toLocaleString("es-AR")}</span>
+                  <div className="mt-2 pt-2 border-t border-white/10 font-bold text-[13px] flex justify-between">
+                    <span className="text-white">Total Patrimonio</span>
+                    <span className="font-mono text-white">${reportData.totalPatrimonio.toLocaleString("es-AR")}</span>
                   </div>
                 </div>
               </div>
@@ -384,37 +384,37 @@ export default function FinancialReports() {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-100">
-                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Fecha</th>
-                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Tipo</th>
-                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Número</th>
-                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase hidden md:table-cell">Emisor/Receptor</th>
-                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase hidden lg:table-cell">CUIT</th>
-                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Neto</th>
-                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">IVA</th>
-                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Total</th>
+                    <tr className="border-b border-white/10">
+                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Fecha</th>
+                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Tipo</th>
+                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Número</th>
+                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase hidden md:table-cell">Emisor/Receptor</th>
+                      <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase hidden lg:table-cell">CUIT</th>
+                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Neto</th>
+                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">IVA</th>
+                      <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Total</th>
                     </tr>
                   </thead>
                   <tbody>
                     {reportData.data.map((r, i) => (
-                      <tr key={i} className="border-b border-slate-50">
-                        <td className="px-3 py-2 text-[12px]">{r.fecha}</td>
+                      <tr key={i} className="border-b border-white/5">
+                        <td className="px-3 py-2 text-[12px] text-slate-300">{r.fecha}</td>
                         <td className="px-3 py-2 text-[12px]"><StatusBadge status={r.tipo} /></td>
-                        <td className="px-3 py-2 text-[12px] font-mono">{r.numero}</td>
-                        <td className="px-3 py-2 text-[12px] hidden md:table-cell">{r.emisor_receptor}</td>
-                        <td className="px-3 py-2 text-[12px] font-mono hidden lg:table-cell">{r.cuit}</td>
-                        <td className="px-3 py-2 text-right text-[12px] font-mono">${r.neto.toLocaleString("es-AR")}</td>
-                        <td className="px-3 py-2 text-right text-[12px] font-mono text-amber-600">${r.iva.toLocaleString("es-AR")}</td>
-                        <td className="px-3 py-2 text-right text-[12px] font-mono font-bold">${r.total.toLocaleString("es-AR")}</td>
+                        <td className="px-3 py-2 text-[12px] font-mono text-slate-300">{r.numero}</td>
+                        <td className="px-3 py-2 text-[12px] text-slate-300 hidden md:table-cell">{r.emisor_receptor}</td>
+                        <td className="px-3 py-2 text-[12px] font-mono text-slate-300 hidden lg:table-cell">{r.cuit}</td>
+                        <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${r.neto.toLocaleString("es-AR")}</td>
+                        <td className="px-3 py-2 text-right text-[12px] font-mono text-amber-400">${r.iva.toLocaleString("es-AR")}</td>
+                        <td className="px-3 py-2 text-right text-[12px] font-mono font-bold text-white">${r.total.toLocaleString("es-AR")}</td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="bg-slate-50 font-bold">
-                      <td colSpan={5} className="px-3 py-2 text-[12px] text-right">Totales:</td>
-                      <td className="px-3 py-2 text-right text-[12px] font-mono">${reportData.totals.totalNeto.toLocaleString("es-AR")}</td>
-                      <td className="px-3 py-2 text-right text-[12px] font-mono text-amber-600">${reportData.totals.totalIva.toLocaleString("es-AR")}</td>
-                      <td className="px-3 py-2 text-right text-[12px] font-mono">${reportData.totals.totalGeneral.toLocaleString("es-AR")}</td>
+                    <tr className="bg-white/5 font-bold">
+                      <td colSpan={5} className="px-3 py-2 text-[12px] text-right text-slate-300">Totales:</td>
+                      <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${reportData.totals.totalNeto.toLocaleString("es-AR")}</td>
+                      <td className="px-3 py-2 text-right text-[12px] font-mono text-amber-400">${reportData.totals.totalIva.toLocaleString("es-AR")}</td>
+                      <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${reportData.totals.totalGeneral.toLocaleString("es-AR")}</td>
                     </tr>
                   </tfoot>
                 </table>
@@ -422,38 +422,38 @@ export default function FinancialReports() {
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100">
+                  <tr className="border-b border-white/10">
                     {selectedReport === "balance_comprobacion" ? (
                       <>
-                        <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Cuenta</th>
-                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Debe</th>
-                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Haber</th>
-                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Saldo</th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Cuenta</th>
+                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Debe</th>
+                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Haber</th>
+                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Saldo</th>
                       </>
                     ) : (
                       <>
-                        <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Concepto</th>
-                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-500 uppercase">Monto</th>
+                        <th className="text-left px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Concepto</th>
+                        <th className="text-right px-3 py-2 text-[11px] font-semibold text-slate-400 uppercase">Monto</th>
                       </>
                     )}
                   </tr>
                 </thead>
                 <tbody>
                   {reportData.data.map((r, i) => (
-                    <tr key={i} className="border-b border-slate-50">
+                    <tr key={i} className="border-b border-white/5">
                       {selectedReport === "balance_comprobacion" ? (
                         <>
-                          <td className="px-3 py-2 text-[12px] font-medium">{r.account}</td>
-                          <td className="px-3 py-2 text-right text-[12px] font-mono">${r.debit.toLocaleString("es-AR")}</td>
-                          <td className="px-3 py-2 text-right text-[12px] font-mono">${r.credit.toLocaleString("es-AR")}</td>
-                          <td className={`px-3 py-2 text-right text-[12px] font-mono font-bold ${r.saldo >= 0 ? "text-[#1A1A2E]" : "text-rose-600"}`}>
+                          <td className="px-3 py-2 text-[12px] font-medium text-white">{r.account}</td>
+                          <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${r.debit.toLocaleString("es-AR")}</td>
+                          <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${r.credit.toLocaleString("es-AR")}</td>
+                          <td className={`px-3 py-2 text-right text-[12px] font-mono font-bold ${r.saldo >= 0 ? "text-white" : "text-rose-400"}`}>
                             ${r.saldo.toLocaleString("es-AR")}
                           </td>
                         </>
                       ) : (
                         <>
-                          <td className="px-3 py-2 text-[12px] font-medium">{r.concepto}</td>
-                          <td className={`px-3 py-2 text-right text-[12px] font-mono font-bold ${r.monto >= 0 ? "text-[#1A1A2E]" : "text-rose-600"}`}>
+                          <td className="px-3 py-2 text-[12px] font-medium text-white">{r.concepto}</td>
+                          <td className={`px-3 py-2 text-right text-[12px] font-mono font-bold ${r.monto >= 0 ? "text-white" : "text-rose-400"}`}>
                             ${Math.abs(r.monto).toLocaleString("es-AR")}
                           </td>
                         </>
@@ -463,20 +463,20 @@ export default function FinancialReports() {
                 </tbody>
                 {reportData.totals && (
                   <tfoot>
-                    <tr className="bg-slate-50 font-bold">
-                      <td className="px-3 py-2 text-[12px]">
+                    <tr className="bg-white/5 font-bold">
+                      <td className="px-3 py-2 text-[12px] text-slate-300">
                         {selectedReport === "balance_comprobacion" ? "Totales" : "Resultado Neto"}
                       </td>
                       {selectedReport === "balance_comprobacion" ? (
                         <>
-                          <td className="px-3 py-2 text-right text-[12px] font-mono">${reportData.totals.totalDebe.toLocaleString("es-AR")}</td>
-                          <td className="px-3 py-2 text-right text-[12px] font-mono">${reportData.totals.totalHaber.toLocaleString("es-AR")}</td>
-                          <td className={`px-3 py-2 text-right text-[12px] font-mono ${reportData.totals.diferencia === 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                          <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${reportData.totals.totalDebe.toLocaleString("es-AR")}</td>
+                          <td className="px-3 py-2 text-right text-[12px] font-mono text-white">${reportData.totals.totalHaber.toLocaleString("es-AR")}</td>
+                          <td className={`px-3 py-2 text-right text-[12px] font-mono ${reportData.totals.diferencia === 0 ? "text-emerald-400" : "text-rose-400"}`}>
                             ${reportData.totals.diferencia.toLocaleString("es-AR")}
                           </td>
                         </>
                       ) : (
-                        <td className={`px-3 py-2 text-right text-[12px] font-mono ${reportData.resultado >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                        <td className={`px-3 py-2 text-right text-[12px] font-mono ${reportData.resultado >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                           ${reportData.resultado.toLocaleString("es-AR")}
                         </td>
                       )}

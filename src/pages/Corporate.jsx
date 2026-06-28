@@ -169,7 +169,7 @@ export default function Corporate() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-slate-200 border-t-[#00C7D9] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-white/10 border-t-[#00C7D9] rounded-full animate-spin" />
     </div>
   );
 
@@ -187,9 +187,9 @@ export default function Corporate() {
           <Input placeholder="Buscar registros..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-[13px]" />
         </div>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-          className="h-9 px-3 rounded-lg border border-slate-200 text-[13px] bg-white focus:outline-none">
+          className="h-9 px-3 rounded-lg border border-white/10 text-[13px] bg-[#1A1A2E] text-white focus:outline-none">
           <option value="">Todos los tipos</option>
-          {Object.entries(recordTypeLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          {Object.entries(recordTypeLabels).map(([k, v]) => <option key={k} value={k} className="bg-[#1A1A2E] text-white">{v}</option>)}
         </select>
       </div>
 
@@ -203,15 +203,15 @@ export default function Corporate() {
         <div className="space-y-2">
           {filtered.map(r => (
             <div key={r.id} onClick={() => { setEditing(r); setShowForm(true); }}
-              className="bg-white rounded-xl p-4 shadow-sm border border-slate-100 hover:border-[#00C7D9]/30 cursor-pointer transition-all">
+              className="bg-[#1A1A2E] rounded-xl p-4 shadow-sm border border-white/10 hover:border-[#00C7D9]/30 cursor-pointer transition-all">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center flex-shrink-0">
-                    <FileText className="w-4 h-4 text-purple-600" />
+                  <div className="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center flex-shrink-0">
+                    <FileText className="w-4 h-4 text-purple-400" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-[#1A1A2E] truncate">{r.title}</p>
-                    <p className="text-[11px] text-slate-500">{r.client_name} · {recordTypeLabels[r.record_type]}</p>
+                    <p className="text-[13px] font-semibold text-white truncate">{r.title}</p>
+                    <p className="text-[11px] text-slate-400">{r.client_name} · {recordTypeLabels[r.record_type]}</p>
                     {r.date && <p className="text-[11px] text-slate-400 font-mono">{r.date}</p>}
                   </div>
                 </div>

@@ -63,7 +63,7 @@ export default function Documents() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-[#00C7D9] rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-white/10 border-t-[#00C7D9] rounded-full animate-spin" />
       </div>
     );
   }
@@ -96,21 +96,21 @@ export default function Documents() {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        {[
-          { label: "Pendiente Revisión", status: "pending_review", count: documents.filter(d => d.status === "pending_review").length },
-          { label: "Procesando IA", status: "processing", count: documents.filter(d => d.status === "processing").length },
-          { label: "Aprobados", status: "approved", count: documents.filter(d => d.status === "approved").length },
-          { label: "Rechazados", status: "rejected", count: documents.filter(d => d.status === "rejected").length },
-        ].map(s => (
-          <button
-            key={s.status}
-            onClick={() => setStatusFilter(statusFilter === s.status ? "" : s.status)}
-            className={`p-3 rounded-xl text-left transition-all ${statusFilter === s.status ? "bg-[#00C7D9]/10 border-[#00C7D9] border-2" : s.status === "pending_review" && s.count > 0 ? "bg-amber-50 border border-amber-300" : "bg-white border border-slate-100 hover:border-slate-200"}`}
-          >
-            <p className="text-lg font-bold text-[#1A1A2E]">{s.count}</p>
-            <p className="text-[11px] text-slate-500">{s.label}</p>
-          </button>
-        ))}
+      {[
+        { label: "Pendiente Revisión", status: "pending_review", count: documents.filter(d => d.status === "pending_review").length },
+        { label: "Procesando IA", status: "processing", count: documents.filter(d => d.status === "processing").length },
+        { label: "Aprobados", status: "approved", count: documents.filter(d => d.status === "approved").length },
+        { label: "Rechazados", status: "rejected", count: documents.filter(d => d.status === "rejected").length },
+      ].map(s => (
+        <button
+          key={s.status}
+          onClick={() => setStatusFilter(statusFilter === s.status ? "" : s.status)}
+          className={`p-3 rounded-xl text-left transition-all ${statusFilter === s.status ? "bg-[#00C7D9]/10 border-[#00C7D9] border-2" : s.status === "pending_review" && s.count > 0 ? "bg-amber-500/10 border border-amber-500/30" : "bg-[#1A1A2E] border border-white/10 hover:border-white/20"}`}
+        >
+          <p className="text-lg font-bold text-white">{s.count}</p>
+          <p className="text-[11px] text-slate-400">{s.label}</p>
+        </button>
+      ))}
       </div>
 
       <div className="flex gap-3 mb-4">
@@ -127,29 +127,29 @@ export default function Documents() {
           </Button>
         </EmptyState>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-[#1A1A2E] rounded-xl shadow-sm border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Documento</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden sm:table-cell">Cliente</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden md:table-cell">Tipo</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">Monto</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider hidden lg:table-cell">IA</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Estado</th>
+                <tr className="border-b border-white/10">
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Documento</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:table-cell">Cliente</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden md:table-cell">Tipo</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden lg:table-cell">Monto</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden lg:table-cell">IA</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(doc => (
-                  <tr key={doc.id} onClick={() => setSelectedDoc(doc)} className="border-b border-slate-50 hover:bg-[#E0F7FA]/30 cursor-pointer transition-colors">
+                  <tr key={doc.id} onClick={() => setSelectedDoc(doc)} className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors">
                     <td className="px-4 py-3">
-                      <p className="text-[13px] font-medium text-[#1A1A2E]">{doc.title}</p>
+                      <p className="text-[13px] font-medium text-white">{doc.title}</p>
                       <p className="text-[11px] text-slate-400">{doc.date || "Sin fecha"}</p>
                     </td>
-                    <td className="px-4 py-3 text-[13px] text-slate-600 hidden sm:table-cell">{getClientName(doc.client_id)}</td>
-                    <td className="px-4 py-3 text-[13px] text-slate-600 hidden md:table-cell">{docTypeLabels[doc.doc_type] || doc.doc_type || "—"}</td>
-                    <td className="px-4 py-3 text-[13px] font-medium text-[#1A1A2E] hidden lg:table-cell font-mono">
+                    <td className="px-4 py-3 text-[13px] text-slate-300 hidden sm:table-cell">{getClientName(doc.client_id)}</td>
+                    <td className="px-4 py-3 text-[13px] text-slate-300 hidden md:table-cell">{docTypeLabels[doc.doc_type] || doc.doc_type || "—"}</td>
+                    <td className="px-4 py-3 text-[13px] font-medium text-white hidden lg:table-cell font-mono">
                       {doc.amount ? `$${doc.amount.toLocaleString("es-AR")}` : "—"}
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">

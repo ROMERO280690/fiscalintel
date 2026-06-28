@@ -217,7 +217,7 @@ export default function Invoicing() {
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-slate-200 border-t-[#00C7D9] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-white/10 border-t-[#00C7D9] rounded-full animate-spin" />
     </div>
   );
 
@@ -230,17 +230,17 @@ export default function Invoicing() {
       </PageHeader>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
-        {[
-          { label: "Borradores", value: invoices.filter(i => i.status === "draft").length, color: "text-slate-600" },
-          { label: "Pendiente CAE", value: totalPending, color: "text-amber-600" },
-          { label: "Emitidas", value: invoices.filter(i => i.status === "issued").length, color: "text-emerald-600" },
-          { label: "Total facturado", value: `$${totalIssued.toLocaleString("es-AR")}`, color: "text-[#00C7D9]" },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl p-4 shadow-sm border border-slate-100">
-            <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
-            <p className="text-[11px] text-slate-500 mt-0.5">{s.label}</p>
-          </div>
-        ))}
+      {[
+        { label: "Borradores", value: invoices.filter(i => i.status === "draft").length, color: "text-slate-300" },
+        { label: "Pendiente CAE", value: totalPending, color: "text-amber-400" },
+        { label: "Emitidas", value: invoices.filter(i => i.status === "issued").length, color: "text-emerald-400" },
+        { label: "Total facturado", value: `$${totalIssued.toLocaleString("es-AR")}`, color: "text-[#00C7D9]" },
+      ].map(s => (
+        <div key={s.label} className="bg-[#1A1A2E] rounded-xl p-4 shadow-sm border border-white/10">
+          <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+          <p className="text-[11px] text-slate-400 mt-0.5">{s.label}</p>
+        </div>
+      ))}
       </div>
 
       <div className="flex gap-3 mb-4">
@@ -249,9 +249,9 @@ export default function Invoicing() {
           <Input placeholder="Buscar por cliente o receptor..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9 h-9 text-[13px]" />
         </div>
         <select value={typeFilter} onChange={e => setTypeFilter(e.target.value)}
-          className="h-9 px-3 rounded-lg border border-slate-200 text-[13px] bg-white text-slate-700 focus:outline-none">
+          className="h-9 px-3 rounded-lg border border-white/10 text-[13px] bg-[#1A1A2E] text-white focus:outline-none">
           <option value="">Todos los tipos</option>
-          {Object.entries(invoiceTypeLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          {Object.entries(invoiceTypeLabels).map(([k, v]) => <option key={k} value={k} className="bg-[#1A1A2E] text-white">{v}</option>)}
         </select>
       </div>
 
@@ -262,29 +262,29 @@ export default function Invoicing() {
           </Button>
         </EmptyState>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-[#1A1A2E] rounded-xl shadow-sm border border-white/10 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase">Comprobante</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase hidden sm:table-cell">Receptor</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase hidden md:table-cell">Fecha</th>
-                  <th className="text-right px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase">Total</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-500 uppercase">Estado</th>
+                <tr className="border-b border-white/10">
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Comprobante</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase hidden sm:table-cell">Receptor</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase hidden md:table-cell">Fecha</th>
+                  <th className="text-right px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Total</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Estado</th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.map(inv => (
                   <tr key={inv.id} onClick={() => { setEditing(inv); setShowForm(true); }}
-                    className="border-b border-slate-50 hover:bg-[#E0F7FA]/30 cursor-pointer transition-colors">
+                    className="border-b border-white/5 hover:bg-white/5 cursor-pointer transition-colors">
                     <td className="px-4 py-3">
-                      <p className="text-[13px] font-medium text-[#1A1A2E]">{invoiceTypeLabels[inv.invoice_type]} {inv.point_of_sale && inv.invoice_number ? `${inv.point_of_sale}-${inv.invoice_number}` : ""}</p>
+                      <p className="text-[13px] font-medium text-white">{invoiceTypeLabels[inv.invoice_type]} {inv.point_of_sale && inv.invoice_number ? `${inv.point_of_sale}-${inv.invoice_number}` : ""}</p>
                       <p className="text-[11px] text-slate-400">{inv.client_name}</p>
                     </td>
-                    <td className="px-4 py-3 text-[13px] text-slate-600 hidden sm:table-cell">{inv.receiver_name || "—"}</td>
-                    <td className="px-4 py-3 text-[13px] text-slate-600 hidden md:table-cell font-mono">{inv.date || "—"}</td>
-                    <td className="px-4 py-3 text-right text-[13px] font-bold text-[#1A1A2E] font-mono">
+                    <td className="px-4 py-3 text-[13px] text-slate-300 hidden sm:table-cell">{inv.receiver_name || "—"}</td>
+                    <td className="px-4 py-3 text-[13px] text-slate-300 hidden md:table-cell font-mono">{inv.date || "—"}</td>
+                    <td className="px-4 py-3 text-right text-[13px] font-bold text-white font-mono">
                       ${(inv.total_amount || 0).toLocaleString("es-AR")}
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={inv.status} /></td>
