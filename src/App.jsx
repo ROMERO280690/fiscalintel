@@ -45,6 +45,7 @@ import Companies from '@/pages/Companies';
 import Onboarding from '@/pages/Onboarding';
 import ARCASettings from '@/pages/ARCASettings';
 import HelpCenter from '@/pages/HelpCenter';
+import Team from '@/pages/Team';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -103,6 +104,7 @@ const AuthenticatedApp = () => {
           <Route path="/onboarding" element={<Onboarding />} />
           <Route path="/settings/arca" element={<ARCASettings />} />
           <Route path="/help" element={<HelpCenter />} />
+          <Route path="/team" element={<Team />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

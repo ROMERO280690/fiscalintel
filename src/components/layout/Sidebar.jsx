@@ -99,6 +99,7 @@ const navSections = [
     label: "Sistema",
     items: [
       { icon: Building2, label: "Empresas & Sucursales", path: "/companies" },
+      { icon: Users,     label: "Equipo y Permisos",     path: "/team" },
       { icon: BookOpen,  label: "Plan de Cuentas",       path: "/account-plan" },
       { icon: Activity,  label: "Auditoría & Logs",      path: "/audit" },
       { icon: Shield,    label: "Portal del Cliente",    path: "/portal" },
