@@ -38,16 +38,16 @@ export default function ResetPassword() {
     return (
       <AuthLayout
         icon={AlertTriangle}
-        title="Invalid reset link"
-        subtitle="This password reset link is missing or invalid"
+        title="Enlace inválido"
+        subtitle="Este enlace para restablecer contraseña es inválido o no existe"
         footer={
-          <Link to="/forgot-password" className="text-primary font-medium hover:underline">
-            Request a new link
+          <Link to="/forgot-password" className="text-[#00C7D9] font-medium hover:underline">
+            Solicitar nuevo enlace
           </Link>
         }
       >
-        <p className="text-sm text-foreground text-center">
-          The link you used appears to be incomplete. Please request a new password reset email.
+        <p className="text-sm text-slate-300 text-center">
+          El enlace que usaste parece estar incompleto. Por favor, solicitá un nuevo email de recuperación.
         </p>
       </AuthLayout>
     );
@@ -56,19 +56,19 @@ export default function ResetPassword() {
   return (
     <AuthLayout
       icon={Lock}
-      title="New password"
-      subtitle="Enter your new password below"
+      title="Nueva contraseña"
+      subtitle="Ingresá tu nueva contraseña"
     >
       {error && (
-        <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
+        <div className="mb-4 p-3 rounded-lg bg-rose-500/10 text-rose-400 text-sm border border-rose-500/20">
           {error}
         </div>
       )}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password" className="text-slate-300">Nueva Contraseña</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
             <Input
               id="password"
               type="password"
@@ -77,15 +77,15 @@ export default function ResetPassword() {
               placeholder="••••••••"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
               required
             />
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="confirm">Confirm Password</Label>
+          <Label htmlFor="confirm" className="text-slate-300">Confirmar Contraseña</Label>
           <div className="relative">
-            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
             <Input
               id="confirm"
               type="password"
@@ -93,19 +93,19 @@ export default function ResetPassword() {
               placeholder="••••••••"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="pl-10 h-12"
+              className="pl-10 h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
               required
             />
           </div>
         </div>
-        <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+        <Button type="submit" className="w-full h-12 font-medium bg-gradient-to-r from-[#00C7D9] to-[#00A8BD] hover:from-[#00A8BD] hover:to-[#0097A8] text-white shadow-lg shadow-[#00C7D9]/20" disabled={loading}>
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Resetting...
+              Restableciendo...
             </>
           ) : (
-            "Reset password"
+            "Restablecer contraseña"
           )}
         </Button>
       </form>

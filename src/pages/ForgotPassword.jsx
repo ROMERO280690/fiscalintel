@@ -28,45 +28,45 @@ export default function ForgotPassword() {
   return (
     <AuthLayout
       icon={Mail}
-      title="Reset password"
-      subtitle="We'll send you a link to reset it"
+      title="Recuperar contraseña"
+      subtitle="Te enviaremos un enlace para restablecerla"
       footer={
-        <Link to="/login" className="text-primary font-medium hover:underline">
-          <ArrowLeft className="w-3 h-3 inline mr-1" />Back to log in
+        <Link to="/login" className="text-[#00C7D9] font-medium hover:underline">
+          <ArrowLeft className="w-3 h-3 inline mr-1" />Volver al inicio de sesión
         </Link>
       }
     >
       {sent ? (
-        <p className="text-sm text-foreground text-center">
-          If an account exists with that email, you'll receive a password reset link shortly.
+        <p className="text-sm text-slate-300 text-center">
+          Si existe una cuenta con ese email, recibirás un enlace para restablecer tu contraseña.
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
+            <Label htmlFor="email" className="text-slate-300">Email</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" aria-hidden="true" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" aria-hidden="true" />
               <Input
                 id="email"
                 type="email"
                 autoComplete="email"
                 autoFocus
-                placeholder="you@example.com"
+                placeholder="tu@empresa.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 h-12"
+                className="pl-10 h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-500"
                 required
               />
             </div>
           </div>
-          <Button type="submit" className="w-full h-12 font-medium" disabled={loading}>
+          <Button type="submit" className="w-full h-12 font-medium bg-gradient-to-r from-[#00C7D9] to-[#00A8BD] hover:from-[#00A8BD] hover:to-[#0097A8] text-white shadow-lg shadow-[#00C7D9]/20" disabled={loading}>
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Sending...
+                Enviando...
               </>
             ) : (
-              "Send reset link"
+              "Enviar enlace"
             )}
           </Button>
         </form>
