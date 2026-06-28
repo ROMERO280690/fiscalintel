@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
-import { Shield, Upload, CheckCircle, X, Key, FileText, Database, Cloud } from "lucide-react";
+import { Shield, Upload, CheckCircle, X, Key, FileText, Database, Cloud, Copy, ExternalLink, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
+import StatusBadge from "@/components/shared/StatusBadge";
 
 export default function ARCASettings() {
   const [certUploaded, setCertUploaded] = useState(false);
@@ -13,6 +14,9 @@ export default function ARCASettings() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [activeTab, setActiveTab] = useState("arca");
+  const [certContent, setCertContent] = useState('');
+  const [keyContent, setKeyContent] = useState('');
+  const [formData, setFormData] = useState({ certFile: null, keyFile: null, taxKey: '' });
 
   const tabs = [
     { id: "arca", label: "Certificados ARCA/AFIP", icon: Shield },
@@ -29,20 +33,30 @@ export default function ARCASettings() {
       // Leer contenido del archivo
       const text = await file.text();
       
-      // Guardar en variables de entorno (simulado - en producción usar dashboard)
-      const secretName = type === 'cert' ? 'ARCA_CERT_PEM' : type === 'key' ? 'ARCA_KEY_PEM' : 'ARCA_TAX_KEY';
-      
-      // Mostrar instrucciones para guardar el secreto
-      alert(`Archivo cargado: ${file.name}\n\nPara activar la facturación electrónica:\n1. Andá a Dashboard > Settings > Secrets\n2. Creá la variable ${secretName}\n3. Pegá el contenido del archivo .pem\n4. Guardá y reiniciá la app`);
-      
-      if (type === 'cert') setCertUploaded(true);
-      if (type === 'key') setKeyUploaded(true);
-      if (type === 'tax') setTaxKeyUploaded(true);
+      // Guardar contenido en estado
+      if (type === 'cert') {
+        setCertContent(text);
+        setCertUploaded(true);
+        setFormData(prev => ({ ...prev, certFile: file }));
+      }
+      if (type === 'key') {
+        setKeyContent(text);
+        setKeyUploaded(true);
+        setFormData(prev => ({ ...prev, keyFile: file }));
+      }
+      if (type === 'tax') {
+        setTaxKeyUploaded(true);
+      }
       
     } catch (error) {
       alert('Error al cargar archivo: ' + error.message);
     }
     setUploading(false);
+  };
+
+  const copyToClipboard = (text, type) => {
+    navigator.clipboard.writeText(text);
+    alert(`${type} copiado al portapapeles. Ahora andá a Dashboard > Settings > Secrets y pegalo en la variable correspondiente.`);
   };
 
   const testARCAConnection = async () => {
@@ -137,6 +151,19 @@ export default function ARCASettings() {
                   className="text-[12px] text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-semibold file:bg-[#00C7D9] file:text-white hover:file:bg-[#00A8BD]"
                   disabled={uploading}
                 />
+                {certUploaded && certContent && (
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyToClipboard(certContent, 'Certificado')}
+                      className="text-xs h-8 border-white/10 text-white hover:bg-white/5"
+                    >
+                      <Copy className="w-3 h-3 mr-1" />
+                      Copiar contenido
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Clave privada */}
@@ -159,6 +186,19 @@ export default function ARCASettings() {
                   className="text-[12px] text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[12px] file:font-semibold file:bg-[#00C7D9] file:text-white hover:file:bg-[#00A8BD]"
                   disabled={uploading}
                 />
+                {keyUploaded && keyContent && (
+                  <div className="mt-3 flex gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyToClipboard(keyContent, 'Clave privada')}
+                      className="text-xs h-8 border-white/10 text-white hover:bg-white/5"
+                    >
+                      <Copy className="w-3 h-3 mr-1" />
+                      Copiar contenido
+                    </Button>
+                  </div>
+                )}
               </div>
 
               {/* Clave fiscal */}
@@ -171,15 +211,24 @@ export default function ARCASettings() {
                   {taxKeyUploaded ? (
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
                   ) : (
-                    <X className="w-5 h-5 text-rose-400" />
+                    <AlertTriangle className="w-5 h-5 text-amber-400" />
                   )}
                 </div>
                 <Input
                   type="password"
                   placeholder="Ingresar clave fiscal"
-                  className="bg-white/5 border-white/10 text-white"
-                  onChange={(e) => setTaxKeyUploaded(e.target.value.length > 0)}
+                  value={formData.taxKey}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, taxKey: e.target.value }));
+                    setTaxKeyUploaded(e.target.value.length > 0);
+                  }}
+                  className="bg-white/5 border-white/10 text-white h-10"
                 />
+                {taxKeyUploaded && (
+                  <div className="mt-3 bg-white/5 rounded p-3 border border-white/10">
+                    <span className="text-[11px] text-emerald-400 font-semibold">✓ Clave fiscal ingresada</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -218,19 +267,89 @@ export default function ARCASettings() {
               </div>
             )}
 
-            {/* Instrucciones */}
-            <div className="mt-6 bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-              <p className="text-[13px] font-semibold text-blue-400 mb-2">📋 Pasos para activar facturación electrónica:</p>
-              <ol className="text-[12px] text-slate-300 space-y-1 list-decimal list-inside">
-                <li>Subí tu certificado .pem (obtenido de AFIP)</li>
-                <li>Subí tu clave privada .pem</li>
-                <li>Ingresá tu Clave Fiscal con nivel 3</li>
-                <li>Andá a <strong>Dashboard &gt; Settings &gt; Secrets</strong></li>
-                <li>Creá las variables: <code className="bg-white/10 px-1 rounded">ARCA_CERT_PEM</code>, <code className="bg-white/10 px-1 rounded">ARCA_KEY_PEM</code>, <code className="bg-white/10 px-1 rounded">ARCA_TAX_KEY</code></li>
-                <li>Pegá el contenido de cada archivo en su variable correspondiente</li>
-                <li>Reiniciá la aplicación</li>
-                <li>Probá la conexión con el botón de arriba</li>
+            {/* Instrucciones de configuración de Secrets */}
+            <div className="mt-6 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/30 rounded-xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Shield className="w-5 h-5 text-blue-400" />
+                <p className="text-[14px] font-bold text-blue-400">🔐 Configuración Segura de Secrets</p>
+              </div>
+              <p className="text-[12px] text-slate-300 mb-4">
+                Los secrets se guardan encriptados en el dashboard de Base44 y solo el backend puede acceder a ellos. Seguí estos pasos:
+              </p>
+              <ol className="space-y-3">
+                <li className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-400 font-bold text-xs">1</span>
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white mb-1">Abrí el Dashboard de Base44</p>
+                    <p className="text-[11px] text-slate-400">Andá a <strong>Settings &gt; Secrets</strong> en tu dashboard</p>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-400 font-bold text-xs">2</span>
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white mb-1">Creá las 3 variables</p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      <code className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-[11px] font-mono">ARCA_CERT_PEM</code>
+                      <code className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-[11px] font-mono">ARCA_KEY_PEM</code>
+                      <code className="bg-blue-500/20 text-blue-300 px-2 py-1 rounded text-[11px] font-mono">ARCA_TAX_KEY</code>
+                    </div>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-400 font-bold text-xs">3</span>
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white mb-1">Pegá el contenido de cada archivo</p>
+                    <p className="text-[11px] text-slate-400">Usá los botones "Copiar contenido" de arriba para cada archivo .pem</p>
+                  </div>
+                </li>
+                <li className="flex gap-3">
+                  <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-blue-400 font-bold text-xs">4</span>
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-semibold text-white mb-1">Guardá y reiniciá</p>
+                    <p className="text-[11px] text-slate-400">Hacé clic en Save y reiniciá la aplicación para aplicar los cambios</p>
+                  </div>
+                </li>
               </ol>
+
+              {/* Estado de secrets */}
+              <div className="mt-4 pt-4 border-t border-blue-500/30">
+                <div className="flex items-center justify-between">
+                  <p className="text-[12px] text-slate-300">Estado de configuración:</p>
+                  <StatusBadge status={certUploaded && keyUploaded && taxKeyUploaded ? 'approved' : 'pending'} />
+                </div>
+                {!(certUploaded && keyUploaded && taxKeyUploaded) && (
+                  <p className="text-[11px] text-amber-400 mt-2 flex items-center gap-1">
+                    <AlertTriangle className="w-3 h-3" />
+                    Completá los 3 pasos para habilitar la facturación electrónica
+                  </p>
+                )}
+                {certUploaded && keyUploaded && taxKeyUploaded && (
+                  <p className="text-[11px] text-emerald-400 mt-2 flex items-center gap-1">
+                    <CheckCircle className="w-3 h-3" />
+                    Todos los certificados cargados - Ahora configurá los secrets en el dashboard
+                  </p>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <a
+                  href="https://dev.base44.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[12px] text-[#00C7D9] hover:text-[#00A8BD] flex items-center gap-1 font-medium"
+                >
+                  Ir al Dashboard de Base44
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </div>
           </div>
 
