@@ -261,8 +261,10 @@ async function calculateSalaryWithAI(base44, employee, period) {
   
   const netSalary = grossSalary - totalDeductions;
   
-  // Contribuciones patronales
-  const employerContributions = grossSalary * 0.27; // Aprox 27%
+  // Contribuciones patronales - varía según actividad y tamaño de empresa
+  // Base: 27% pero puede ser 23% (servicios), 29% (comercio), o menos con desgravaciones
+  const tasaPatronal = 0.27;
+  const employerContributions = grossSalary * tasaPatronal;
 
   return {
     baseSalary,
@@ -278,7 +280,7 @@ async function calculateSalaryWithAI(base44, employee, period) {
     totalDeductions,
     netSalary,
     employerContributions,
-    notes: `Calculado automáticamente - ${new Date().toLocaleDateString('es-AR')}`
+    notes: `Calculado automáticamente - ${new Date().toLocaleDateString('es-AR')} | Tasa patronal: ${tasaPatronal * 100}% (ajustar según actividad)`
   };
 }
 

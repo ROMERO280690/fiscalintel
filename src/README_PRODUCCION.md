@@ -75,6 +75,7 @@ Para habilitar la conexión **real** con ARCA/AFIP:
 - ✅ Contabilidad
 - ✅ Tesorería
 - ✅ Documentos
+- ✅ Vencimientos fiscales
 
 ### Funciones que PUEDEN gastar créditos:
 - ⚠️ **Invocaciones LLM** (análisis de documentos con IA)
@@ -93,26 +94,31 @@ Para habilitar la conexión **real** con ARCA/AFIP:
    - Crear organización
    - Invitar contadores/auditores
    - Configurar empresas/clientes
+   - **Importante:** Cargar coeficientes IIBB reales y tasa patronal por actividad
 
 2. **Carga de clientes:**
-   - Ingresar CUIT → el sistema infiere tipo automáticamente
-   - Completar datos restantes (consulta manual en AFIP si es necesario)
+   - Ingresar CUIT → sistema infiere tipo automáticamente
+   - Completar datos restantes (consulta manual en [afip.gob.ar/registrando](https://www.afip.gob.ar/registrando/))
+   - Asignar alícuotas de IIBB según jurisdicción
 
 3. **Facturación:**
    - Crear factura → sistema genera CAE temporal
-   - Validar CAE en portal AFIP (si es crítico)
+   - Validar CAE en portal AFIP (obligatorio para comprobantes oficiales)
    - Descargar PDF y enviar al cliente
+   - **Nota:** Las Facturas A discriminan IVA, B/C incluyen IVA
 
 4. **Liquidación de impuestos:**
    - Seleccionar cliente y período
    - Calcular IVA/IIBB/Sueldos (automático)
-   - Revisar cálculos
+   - **Revisar alertas de riesgo** (crédito fiscal > 90% = posible control AFIP)
+   - Aprobar cálculos
    - Presentar en AFIP (manual u online según configuración)
 
 5. **Contabilidad:**
    - Los comprobantes aprobados generan asientos automáticamente
    - Revisar libro diario/mayor
-   - Exportar reportes
+   - Exportar reportes (Libro IVA, Diario, Mayor)
+   - Cerrar período fiscal manualmente
 
 ---
 

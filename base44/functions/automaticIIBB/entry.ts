@@ -67,7 +67,9 @@ async function calculateIIBB(base44, user, client_id, period, province = 'CABA',
     period
   });
 
-  let coeficienteIngresos = 0.5; // Default 50%
+  // Por defecto, pero el contador debe cargar coeficientes reales según jurisdicción
+  // CABA: 3.5%, Buenos Aires: varía por actividad, Córdoba: 3%, etc.
+  let coeficienteIngresos = 0.5; // Default 50% (debe completarse con CM real)
   let aliquot = 3.5; // Alícuota estándar CABA
 
   if (coefficients && coefficients.length > 0) {

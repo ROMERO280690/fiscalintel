@@ -53,12 +53,13 @@ async function calculateIVA(base44, user, client_id, period) {
     })
   ]);
 
-  // Calcular débito fiscal (ventas)
+  // Calcular débito fiscal (ventas) - Solo Facturas A y ND A discriminan IVA
   let debitoFiscal = 0;
   const ventasDetalle = [];
   
   for (const invoice of sales) {
-    if (['factura_a', 'nota_debito_a'].includes(invoice.invoice_type)) {
+    // Factura A, D, M (RI a RI) y Notas de Débito A discriminan IVA
+    if (['factura_a', 'factura_d', 'factura_m', 'nota_debito_a', 'nota_debito_d'].includes(invoice.invoice_type)) {
       debitoFiscal += invoice.iva_amount || 0;
       ventasDetalle.push({
         tipo: invoice.invoice_type,
@@ -71,7 +72,7 @@ async function calculateIVA(base44, user, client_id, period) {
     }
   }
 
-  // Calcular crédito fiscal (compras)
+  // Calcular crédito fiscal (compras) - Solo compras con IVA discriminado
   let creditoFiscal = 0;
   const comprasDetalle = [];
   
@@ -79,22 +80,29 @@ async function calculateIVA(base44, user, client_id, period) {
     const extractedData = doc.ai_extracted_data ? JSON.parse(doc.ai_extracted_data) : null;
     const ivaAmount = extractedData?.iva_amount || doc.tax_amount || 0;
     
-    creditoFiscal += ivaAmount;
-    comprasDetalle.push({
-      tipo: doc.doc_type,
-      emisor: doc.issuer_name,
-      cuit: doc.issuer_cuit,
-      numero: doc.invoice_number,
-      neto: doc.net_amount || 0,
-      iva: ivaAmount,
-      total: doc.amount || 0
-    });
+    // Solo Factura A, C (con IVA incluido), y Notas de Crédito dan crédito fiscal
+    if (['factura_a', 'factura_c', 'nota_credito_a', 'nota_credito_c'].includes(doc.doc_type)) {
+      creditoFiscal += ivaAmount;
+      comprasDetalle.push({
+        tipo: doc.doc_type,
+        emisor: doc.issuer_name,
+        cuit: doc.issuer_cuit,
+        numero: doc.invoice_number,
+        neto: doc.net_amount || 0,
+        iva: ivaAmount,
+        total: doc.amount || 0
+      });
+    }
   }
 
-  // Cálculo final
+  // Cálculo final - IVA TÉCNICO = Débito - Crédito
+  // Si es negativo, hay saldo a favor del contribuyente
   const ivaTecnico = debitoFiscal - creditoFiscal;
   const aPagar = Math.max(0, ivaTecnico);
   const saldoFavor = Math.max(0, -ivaTecnico);
+  
+  // Validación profesional: si crédito > 90% del débito, alertar posible control AFIP
+  const riesgoControl = creditoFiscal > 0 && debitoFiscal > 0 && (creditoFiscal / debitoFiscal) > 0.9;
 
   // Guardar cálculo
   const taxFiling = await base44.entities.TaxFiling.create({
@@ -115,7 +123,9 @@ async function calculateIVA(base44, user, client_id, period) {
       a_pagar: aPagar,
       saldo_favor: saldoFavor,
       ventas_count: sales.length,
-      compras_count: purchases.length
+      compras_count: purchases.length,
+      riesgo_control: riesgoControl,
+      mensaje_riesgo: riesgoControl ? 'ALERTA: Crédito fiscal > 90% del débito (posible control AFIP)' : null
     })
   });
 
