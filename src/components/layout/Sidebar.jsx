@@ -93,7 +93,7 @@ const navSections = [
     items: [
       { icon: Sparkles, label: "Agentes Especializados", path: "/agents" },
       { icon: Bot,      label: "Asistente IA",           path: "/ai-assistant" },
-      { icon: Bot,      label: "Automatización Fiscal",  path: "/tax-automation" },
+      { icon: Bot,      label: "Automatización Fiscal",  path: "/tax-automation", noPermissionCheck: true },
       { icon: Globe,    label: "Motor Normativo",        path: "/normativa" },
     ]
   },
@@ -127,6 +127,7 @@ export default function Sidebar() {
     ...section,
     items: section.items.filter(item => {
       const mod = PATH_MODULE[item.path];
+      if (item.noPermissionCheck) return true;
       return mod ? canViewModule(mod) : true;
     })
   })).filter(section => section.items.length > 0);
