@@ -28,10 +28,13 @@ export default function ARCASettings() {
     if (!file) return;
     setUploading(true);
     try {
-      const uploadResult = await base44.integrations.Core.UploadFile({ file });
-      
-      // Leer contenido del archivo
-      const text = await file.text();
+      // Leer contenido del archivo directamente
+      const reader = new FileReader();
+      const text = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsText(file);
+      });
       
       // Guardar contenido en estado
       if (type === 'cert') {
@@ -43,9 +46,6 @@ export default function ARCASettings() {
         setKeyContent(text);
         setKeyUploaded(true);
         setFormData(prev => ({ ...prev, keyFile: file }));
-      }
-      if (type === 'tax') {
-        setTaxKeyUploaded(true);
       }
       
     } catch (error) {
@@ -125,18 +125,23 @@ export default function ARCASettings() {
         <div className="space-y-6 max-w-4xl">
           {/* Estado de certificados */}
           <div className="bg-[#1A1A2E] rounded-xl p-6 border border-white/10">
-            <h3 className="text-[15px] font-bold text-white mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-[#00C7D9]" />
-              Certificados Digitales ARCA/AFIP
-            </h3>
+            <div className="mb-4">
+              <h3 className="text-[15px] font-bold text-white mb-2 flex items-center gap-2">
+                <Shield className="w-5 h-5 text-[#00C7D9]" />
+                Certificados Digitales ARCA/AFIP
+              </h3>
+              <p className="text-[12px] text-slate-400">
+                <strong>¿Qué cargar aquí?</strong> Subí los archivos .pem que descargaste de AFIP. Luego copiá su contenido y pegalo en los Secrets de Base44.
+              </p>
+            </div>
             
             <div className="space-y-4">
               {/* Certificado .pem */}
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[13px] font-semibold text-white">Certificado Digital (.pem)</p>
-                    <p className="text-[11px] text-slate-400">Certificado firmado por AFIP para servicios web</p>
+                    <p className="text-[13px] font-semibold text-white">1. Certificado Digital (.pem)</p>
+                    <p className="text-[11px] text-slate-400">Archivo que descargaste de AFIP</p>
                   </div>
                   {certUploaded ? (
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
@@ -152,15 +157,16 @@ export default function ARCASettings() {
                   disabled={uploading}
                 />
                 {certUploaded && certContent && (
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 bg-emerald-500/10 rounded p-3 border border-emerald-500/30">
+                    <p className="text-[11px] text-emerald-400 font-medium mb-2">✓ Archivo cargado - Copiá el contenido:</p>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => copyToClipboard(certContent, 'Certificado')}
-                      className="text-xs h-8 border-white/10 text-white hover:bg-white/5"
+                      className="text-xs h-8 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
                     >
                       <Copy className="w-3 h-3 mr-1" />
-                      Copiar contenido
+                      Copiar contenido del certificado
                     </Button>
                   </div>
                 )}
@@ -170,8 +176,8 @@ export default function ARCASettings() {
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[13px] font-semibold text-white">Clave Privada (.pem)</p>
-                    <p className="text-[11px] text-slate-400">Clave privada del certificado (mantener segura)</p>
+                    <p className="text-[13px] font-semibold text-white">2. Clave Privada (.pem)</p>
+                    <p className="text-[11px] text-slate-400">La clave que generaste junto con el certificado</p>
                   </div>
                   {keyUploaded ? (
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
@@ -187,15 +193,16 @@ export default function ARCASettings() {
                   disabled={uploading}
                 />
                 {keyUploaded && keyContent && (
-                  <div className="mt-3 flex gap-2">
+                  <div className="mt-3 bg-emerald-500/10 rounded p-3 border border-emerald-500/30">
+                    <p className="text-[11px] text-emerald-400 font-medium mb-2">✓ Archivo cargado - Copiá el contenido:</p>
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => copyToClipboard(keyContent, 'Clave privada')}
-                      className="text-xs h-8 border-white/10 text-white hover:bg-white/5"
+                      className="text-xs h-8 border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20"
                     >
                       <Copy className="w-3 h-3 mr-1" />
-                      Copiar contenido
+                      Copiar contenido de la clave
                     </Button>
                   </div>
                 )}
@@ -205,8 +212,8 @@ export default function ARCASettings() {
               <div className="bg-white/5 rounded-lg p-4 border border-white/10">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <p className="text-[13px] font-semibold text-white">Clave Fiscal ARCA</p>
-                    <p className="text-[11px] text-slate-400">Nivel 3 con servicios habilitados (WSFE, F931)</p>
+                    <p className="text-[13px] font-semibold text-white">3. Clave Fiscal de AFIP</p>
+                    <p className="text-[11px] text-slate-400">Tu contraseña de Clave Fiscal (Nivel 3)</p>
                   </div>
                   {taxKeyUploaded ? (
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
@@ -216,7 +223,7 @@ export default function ARCASettings() {
                 </div>
                 <Input
                   type="password"
-                  placeholder="Ingresar clave fiscal"
+                  placeholder="Ingresar tu Clave Fiscal (contraseña)"
                   value={formData.taxKey}
                   onChange={(e) => {
                     setFormData(prev => ({ ...prev, taxKey: e.target.value }));
@@ -225,8 +232,11 @@ export default function ARCASettings() {
                   className="bg-white/5 border-white/10 text-white h-10"
                 />
                 {taxKeyUploaded && (
-                  <div className="mt-3 bg-white/5 rounded p-3 border border-white/10">
-                    <span className="text-[11px] text-emerald-400 font-semibold">✓ Clave fiscal ingresada</span>
+                  <div className="mt-3 bg-emerald-500/10 rounded p-3 border border-emerald-500/30">
+                    <span className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      Clave fiscal ingresada
+                    </span>
                   </div>
                 )}
               </div>
