@@ -5,7 +5,7 @@ import {
   Building2, Calculator, ClipboardList, Shield,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
   Bot, Menu, X, Inbox, FileCheck, Landmark, TrendingUp, Sparkles,
-  BookOpen, Globe, Activity, FileText
+  BookOpen, Globe, Activity, FileText, CheckCircle
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -29,6 +29,8 @@ const PATH_MODULE = {
   "/accounting":    "accounting",
   "/treasury":      "treasury",
   "/financial-reports": "financial_reports",
+  "/bank-reconciliation": "bank_reconciliation",
+  "/bank-reconciliation": "bank_reconciliation",
   "/corporate":     "corporate",
   "/agents":        "agents",
   "/ai-assistant":  "ai_assistant",
@@ -76,6 +78,8 @@ const navSections = [
       { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
       { icon: TrendingUp,    label: "Tesorería",      path: "/treasury" },
       { icon: FileText,      label: "Reportes Financieros", path: "/financial-reports" },
+      { icon: CheckCircle,   label: "Conciliación Bancaria", path: "/bank-reconciliation" },
+      { icon: CheckCircle,   label: "Conciliación Bancaria", path: "/bank-reconciliation" },
     ]
   },
   {

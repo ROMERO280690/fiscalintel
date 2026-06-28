@@ -35,6 +35,7 @@ import Treasury from '@/pages/Treasury';
 import Corporate from '@/pages/Corporate';
 import IIBBConvenio from '@/pages/IIBBConvenio';
 import FinancialReports from '@/pages/FinancialReports';
+import BankReconciliation from '@/pages/BankReconciliation';
 import Agents from '@/pages/Agents';
 import NormativaMotor from '@/pages/NormativaMotor';
 import AccountPlanPage from '@/pages/AccountPlanPage';
@@ -89,6 +90,8 @@ const AuthenticatedApp = () => {
           <Route path="/corporate" element={<Corporate />} />
           <Route path="/iibb-convenio" element={<IIBBConvenio />} />
           <Route path="/financial-reports" element={<FinancialReports />} />
+          <Route path="/bank-reconciliation" element={<BankReconciliation />} />
+          <Route path="/bank-reconciliation" element={<BankReconciliation />} />
           <Route path="/agents" element={<Agents />} />
           <Route path="/normativa" element={<NormativaMotor />} />
           <Route path="/account-plan" element={<AccountPlanPage />} />
