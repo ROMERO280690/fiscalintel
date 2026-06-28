@@ -5,7 +5,7 @@ import {
   Building2, Calculator, ClipboardList, Shield,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
   Bot, Menu, X, Inbox, FileCheck, Landmark, TrendingUp, Sparkles,
-  BookOpen, Globe, Activity
+  BookOpen, Globe, Activity, FileText
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { usePermissions } from "@/hooks/usePermissions";
@@ -28,6 +28,7 @@ const PATH_MODULE = {
   "/payroll":       "payroll",
   "/accounting":    "accounting",
   "/treasury":      "treasury",
+  "/financial-reports": "financial_reports",
   "/corporate":     "corporate",
   "/agents":        "agents",
   "/ai-assistant":  "ai_assistant",
@@ -74,6 +75,7 @@ const navSections = [
     items: [
       { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
       { icon: TrendingUp,    label: "Tesorería",      path: "/treasury" },
+      { icon: FileText,      label: "Reportes Financieros", path: "/financial-reports" },
     ]
   },
   {

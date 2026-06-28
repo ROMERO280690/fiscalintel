@@ -44,6 +44,7 @@ export const MODULE_ROUTES = {
   account_plan:  "/account-plan",
   audit:         "/audit",
   portal:        "/portal",
+  financial_reports: "/financial-reports",
 };
 
 // ─── Permisos por rol ────────────────────────────────────────────────────────
@@ -77,6 +78,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: ALL_ACTIONS, dataScope: "all" },
     audit:         { actions: ALL_ACTIONS, dataScope: "all" },
     portal:        { actions: ALL_ACTIONS, dataScope: "all" },
+    financial_reports: { actions: ALL_ACTIONS, dataScope: "all" },
   },
 
   // ── Empresa ───────────────────────────────────────────────────────────────
@@ -102,6 +104,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: [],         dataScope: "none" },
     audit:         { actions: [],         dataScope: "none" },
     portal:        { actions: ALL_ACTIONS,dataScope: "own" },
+    financial_reports: { actions: READ_ONLY, dataScope: "own" },
   },
 
   // ── Estudio Contable ──────────────────────────────────────────────────────
@@ -126,6 +129,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: ALL_ACTIONS, dataScope: "all" },
     audit:         { actions: READ_ONLY,   dataScope: "all" },
     portal:        { actions: ALL_ACTIONS, dataScope: "all" },
+    financial_reports: { actions: ALL_ACTIONS, dataScope: "all" },
   },
 
   // ── Contador ──────────────────────────────────────────────────────────────
@@ -150,6 +154,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: STANDARD,                       dataScope: "all" },
     audit:         { actions: READ_ONLY,                      dataScope: "all" },
     portal:        { actions: STANDARD,                       dataScope: "all" },
+    financial_reports: { actions: [...STANDARD, "export"],    dataScope: "all" },
   },
 
   // ── Auditor ───────────────────────────────────────────────────────────────
@@ -175,6 +180,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: READ_ONLY, dataScope: "all" },
     audit:         { actions: [...READ_ONLY, "export"], dataScope: "all" },
     portal:        { actions: [],        dataScope: "none" },
+    financial_reports: { actions: READ_ONLY, dataScope: "all" },
   },
 
   // ── Liquidador ────────────────────────────────────────────────────────────
@@ -200,6 +206,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: [],                       dataScope: "none" },
     audit:         { actions: [],                       dataScope: "none" },
     portal:        { actions: READ_ONLY,                dataScope: "all" },
+    financial_reports: { actions: READ_ONLY,            dataScope: "all" },
   },
 
   // ── Administrativo ────────────────────────────────────────────────────────
@@ -224,6 +231,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: [],        dataScope: "none" },
     audit:         { actions: [],        dataScope: "none" },
     portal:        { actions: READ_ONLY, dataScope: "all" },
+    financial_reports: { actions: READ_ONLY, dataScope: "all" },
   },
 
   // ── Cliente ───────────────────────────────────────────────────────────────
