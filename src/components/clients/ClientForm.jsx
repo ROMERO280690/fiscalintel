@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, Search, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { base44 } from "@/api/base44Client";
 
 const clientTypes = [
   { value: "monotributista", label: "Monotributista" },
@@ -33,6 +34,8 @@ export default function ClientForm({ client, onSave, onClose }) {
     notes: client?.notes || "",
   });
   const [saving, setSaving] = useState(false);
+  const [consulting, setConsulting] = useState(false);
+  const [consulted, setConsulted] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +45,37 @@ export default function ClientForm({ client, onSave, onClose }) {
   };
 
   const update = (field, value) => setForm(prev => ({ ...prev, [field]: value }));
+
+  const consultarAFIP = async () => {
+    if (form.cuit.length < 10) return;
+    
+    setConsulting(true);
+    try {
+      const result = await base44.functions.invoke('consultaAFIP', { cuit: form.cuit });
+      
+      if (result.data.found) {
+        setForm(prev => ({
+          ...prev,
+          business_name: result.data.business_name || prev.business_name,
+          fantasy_name: result.data.fantasy_name || prev.fantasy_name,
+          address: result.data.address || prev.address,
+          city: result.data.city || prev.city,
+          province: result.data.province || prev.province,
+          activity: result.data.activity || prev.activity,
+          client_type: result.data.client_type || prev.client_type,
+        }));
+        setConsulted(true);
+      } else {
+        // Si no encontró datos, al menos inferimos el tipo
+        if (result.data.inferred_type) {
+          setForm(prev => ({ ...prev, client_type: result.data.inferred_type }));
+        }
+      }
+    } catch (error) {
+      console.error('Error consultando AFIP:', error);
+    }
+    setConsulting(false);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -63,7 +97,37 @@ export default function ClientForm({ client, onSave, onClose }) {
             </div>
             <div>
               <Label className="text-[12px] font-medium text-slate-600">CUIT *</Label>
-              <Input value={form.cuit} onChange={e => update("cuit", e.target.value)} placeholder="XX-XXXXXXXX-X" required className="mt-1 text-[13px] h-9 font-mono" />
+              <div className="flex gap-2 mt-1">
+                <Input 
+                  value={form.cuit} 
+                  onChange={e => {
+                    update("cuit", e.target.value);
+                    setConsulted(false);
+                  }} 
+                  onBlur={consultarAFIP}
+                  placeholder="XX-XXXXXXXX-X" 
+                  required 
+                  className="text-[13px] h-9 font-mono flex-1" 
+                />
+                {consulting && (
+                  <Button type="button" disabled className="bg-blue-600 h-9 w-9">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  </Button>
+                )}
+                {consulted && !consulting && (
+                  <Button type="button" disabled className="bg-emerald-600 h-9 w-9">
+                    <CheckCircle className="w-4 h-4" />
+                  </Button>
+                )}
+                {!consulted && !consulting && form.cuit.length >= 10 && (
+                  <Button type="button" onClick={consultarAFIP} className="bg-blue-600 hover:bg-blue-700 h-9 w-9">
+                    <Search className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              <p className="text-[10px] text-slate-500 mt-1">
+                {consulted ? '✓ Datos consultados en AFIP' : 'Ingresá el CUIT y se completan automáticamente los datos'}
+              </p>
             </div>
             <div>
               <Label className="text-[12px] font-medium text-slate-600">Tipo de Contribuyente *</Label>
