@@ -30,7 +30,6 @@ const PATH_MODULE = {
   "/treasury":      "treasury",
   "/financial-reports": "financial_reports",
   "/bank-reconciliation": "bank_reconciliation",
-  "/bank-reconciliation": "bank_reconciliation",
   "/corporate":     "corporate",
   "/agents":        "agents",
   "/ai-assistant":  "ai_assistant",
@@ -78,7 +77,6 @@ const navSections = [
       { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
       { icon: TrendingUp,    label: "Tesorería",      path: "/treasury" },
       { icon: FileText,      label: "Reportes Financieros", path: "/financial-reports" },
-      { icon: CheckCircle,   label: "Conciliación Bancaria", path: "/bank-reconciliation" },
       { icon: CheckCircle,   label: "Conciliación Bancaria", path: "/bank-reconciliation" },
     ]
   },
