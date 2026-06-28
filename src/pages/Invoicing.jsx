@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
-import { Plus, Search, FileText, Bot, Loader2, Download, X, CheckCircle, Zap } from "lucide-react";
+import { Plus, Search, FileText, Bot, Loader2, Download, X, CheckCircle, Zap, Printer, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
@@ -186,6 +186,7 @@ export default function Invoicing() {
   const [typeFilter, setTypeFilter] = useState("");
   const [generandoCAE, setGenerandoCAE] = useState(null);
   const [arcoStatus, setArcoStatus] = useState(null);
+  const [viewingInvoice, setViewingInvoice] = useState(null);
 
   const checkARCAStatus = async () => {
     try {
@@ -308,6 +309,7 @@ export default function Invoicing() {
                   <th className="text-right px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Total</th>
                   <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">CAE</th>
                   <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Estado</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-slate-400 uppercase">Acciones</th>
                 </tr>
               </thead>
               <tbody>
@@ -340,6 +342,26 @@ export default function Invoicing() {
                       )}
                     </td>
                     <td className="px-4 py-3"><StatusBadge status={inv.status} /></td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        {inv.status === 'issued' && (
+                          <>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setViewingInvoice(inv); }}
+                              className="text-[10px] flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded"
+                            >
+                              <Eye className="w-3 h-3" /> Ver
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); window.print(); }}
+                              className="text-[10px] flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-2 py-1 rounded"
+                            >
+                              <Printer className="w-3 h-3" /> Imprimir
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -356,6 +378,93 @@ export default function Invoicing() {
           onClose={() => { setShowForm(false); setEditing(null); }}
         />
       )}
+
+      {viewingInvoice && (
+        <InvoiceViewer invoice={viewingInvoice} client={clients.find(c => c.id === viewingInvoice.client_id)} onClose={() => setViewingInvoice(null)} />
+      )}
+    </div>
+  );
+}
+
+function InvoiceViewer({ invoice, client, onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+          <h2 className="text-[15px] font-bold text-[#1A1A2E]">Comprobante {invoice.invoice_type.replace('_', ' ').toUpperCase()}</h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
+        </div>
+        <div className="p-6 space-y-4">
+          {/* Header */}
+          <div className="grid grid-cols-2 gap-4 pb-4 border-b">
+            <div>
+              <p className="text-[10px] text-slate-500 uppercase">Emisor</p>
+              <p className="text-sm font-semibold">{client?.business_name || invoice.client_name}</p>
+              <p className="text-xs text-slate-600">CUIT: {client?.cuit || invoice.receiver_cuit}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-slate-500 uppercase">Comprobante</p>
+              <p className="text-sm font-bold font-mono">{invoice.point_of_sale}-{invoice.invoice_number || '00000000'}</p>
+              <p className="text-xs text-slate-600">Fecha: {invoice.date}</p>
+            </div>
+          </div>
+
+          {/* Receptor */}
+          <div>
+            <p className="text-[10px] text-slate-500 uppercase mb-1">Receptor</p>
+            <p className="text-sm font-semibold">{invoice.receiver_name || 'Consumidor Final'}</p>
+            <p className="text-xs text-slate-600">CUIT: {invoice.receiver_cuit || '00-00000000-0'}</p>
+            <p className="text-xs text-slate-600">Domicilio: {invoice.receiver_address || 'S/D'}</p>
+          </div>
+
+          {/* Detalle */}
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-sm text-slate-700 mb-2">{invoice.description || 'Servicios profesionales'}</p>
+            <div className="space-y-1 text-right">
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-600">Neto</span>
+                <span className="font-mono">${(invoice.net_amount || 0).toLocaleString('es-AR')}</span>
+              </div>
+              <div className="flex justify-between text-xs">
+                <span className="text-slate-600">IVA ({invoice.iva_rate}%)</span>
+                <span className="font-mono">${(invoice.iva_amount || 0).toLocaleString('es-AR')}</span>
+              </div>
+              {invoice.other_taxes > 0 && (
+                <div className="flex justify-between text-xs">
+                  <span className="text-slate-600">Otras percepciones</span>
+                  <span className="font-mono">${invoice.other_taxes.toLocaleString('es-AR')}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm font-bold pt-2 border-t">
+                <span>TOTAL</span>
+                <span className="font-mono text-[#1A1A2E]">${(invoice.total_amount || 0).toLocaleString('es-AR')}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* CAE */}
+          {invoice.cae_number && (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              <p className="text-[10px] text-emerald-700 font-semibold uppercase mb-1">CAE Autorizado</p>
+              <p className="text-sm font-mono text-emerald-800">{invoice.cae_number}</p>
+              <p className="text-[10px] text-emerald-600">Vencimiento: {invoice.cae_expiry}</p>
+            </div>
+          )}
+
+          {/* QR Code placeholder */}
+          <div className="flex items-center justify-center py-4">
+            <div className="w-32 h-32 bg-slate-100 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center">
+              <p className="text-[10px] text-slate-400 text-center">QR<br/>AFIP</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end gap-2 p-5 border-t border-slate-100">
+          <Button variant="outline" size="sm" onClick={onClose} className="text-xs">Cerrar</Button>
+          <Button size="sm" onClick={() => window.print()} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
+            <Printer className="w-3.5 h-3.5 mr-1" /> Imprimir
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

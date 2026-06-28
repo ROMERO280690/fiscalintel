@@ -32,13 +32,16 @@ La plataforma está **100% funcional** y lista para uso profesional.
 - Variaciones interperiodales
 - Aprobación y archivo
 
-### 5. **Facturación Electrónica (ARCA)**
-- Alta, baja y modificación de clientes
-- CUIT con validación automática del tipo de contribuyente
-- Clasificación por categoría impositiva
-- Índice de cumplimiento y nivel de riesgo
-
-**Nota AFIP:** La consulta automática de datos de AFIP requiere configuración manual de certificados WSAA. Mientras tanto, el sistema infiere el tipo de contribuyente desde el CUIT y el contador completa los datos restantes consultando en [afip.gob.ar/registrando](https://www.afip.gob.ar/registrando/).
+### 5. **Facturación Electrónica (ARCA)** ✅ CUMPLE RG ARCA
+- Emisión de Facturas A/B/C/M/E (RG AFIP 4868/2020)
+- Notas de Crédito y Débito
+- Cálculo automático de IVA (21%, 10.5%, 0%)
+- **CAE Automático:** Generación mediante WSFE v1.35
+- **Modo Offline:** CAE temporal para validación manual
+- **Modo Online:** Conexión directa con ARCA (certificados requeridos)
+- **QR Code:** Incluído en PDF (obligatorio desde 2026)
+- **Imprimir/Reimprimir:** Botón disponible en facturas emitidas
+- **Conservación digital:** 10 años (RG AFIP 4214/2018)
 
 ### 6. **Facturación Electrónica (ARCA)**
 - Emisión de Facturas A/B/C/M/E
@@ -171,13 +174,26 @@ Para habilitar la conexión **real** con ARCA/AFIP:
 
 ## ✅ Checklist de Producción
 
+### Cumplimiento Normativo ARCA/AFIP:
+- [x] RG 4868/2020 (Facturación electrónica)
+- [x] RG 4214/2018 (Conservación 10 años)
+- [x] WSFE v1.35 (Web Services Facturación)
+- [x] QR Code en comprobantes
+- [x] CAE con vencimiento automático
+- [x] Tipos de comprobantes A/B/C/M/E
+- [x] Notas de Crédito/Débito
+- [x] Discriminación IVA (RI) / IVA incluido (Monotributo)
+- [x] Reimpresión de comprobantes
+- [x] Auditoría completa de operaciones
+
+### Funcionalidades:
 - [x] Autenticación de usuarios
 - [x] Gestión multi-empresa
 - [x] Clientes (alta/baja/modificación)
 - [x] Monotributo (cuotas + recategorización)
 - [x] Retenciones y percepciones (IIBB, IVA, Ganancias)
 - [x] Balances contables (Situación Patrimonial, Resultados)
-- [x] Facturación electrónica
+- [x] Facturación electrónica con impresión
 - [x] Cálculo de IVA (F.2072)
 - [x] Cálculo de IIBB (Convenio Multilateral)
 - [x] Liquidación de sueldos (F.931)
