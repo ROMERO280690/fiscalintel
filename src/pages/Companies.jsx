@@ -90,10 +90,10 @@ export default function Companies() {
 
       {/* Companies list */}
       {orgCompanies.length === 0 ? (
-        <div className="bg-white rounded-2xl p-16 text-center shadow-sm border border-slate-100">
-          <Building2 className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-          <h3 className="text-base font-bold text-[#1A1A2E]">No hay empresas</h3>
-          <p className="text-[13px] text-slate-500 mt-1 mb-4">Creá la primera empresa para comenzar a operar.</p>
+        <div className="bg-[#1A1A2E] rounded-2xl p-16 text-center shadow-sm border border-white/10">
+          <Building2 className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+          <h3 className="text-base font-bold text-white">No hay empresas</h3>
+          <p className="text-[13px] text-slate-400 mt-1 mb-4">Creá la primera empresa para comenzar a operar.</p>
           <Button onClick={() => setShowCompanyForm(true)} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
             <Plus className="w-3.5 h-3.5 mr-1" /> Nueva Empresa
           </Button>
@@ -104,7 +104,7 @@ export default function Companies() {
             const compBranches = branches.filter(b => b.company_id === company.id);
             const isExp = expanded[company.id];
             return (
-              <div key={company.id} className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+              <div key={company.id} className="bg-[#1A1A2E] rounded-xl shadow-sm border border-white/10 overflow-hidden">
                 <div className="flex items-center gap-3 p-4">
                   <button onClick={() => toggleExpand(company.id)} className="w-6 h-6 flex items-center justify-center text-slate-400">
                     {isExp ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
@@ -116,10 +116,10 @@ export default function Companies() {
                     {company.fantasy_name?.[0] || company.business_name?.[0] || "E"}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[14px] font-semibold text-[#1A1A2E]">
+                    <p className="text-[14px] font-semibold text-white">
                       {company.fantasy_name || company.business_name}
                     </p>
-                    <p className="text-[11px] text-slate-500 font-mono">{company.cuit} · {COMPANY_TYPE_LABELS[company.company_type] || company.company_type}</p>
+                    <p className="text-[11px] text-slate-400 font-mono">{company.cuit} · {COMPANY_TYPE_LABELS[company.company_type] || company.company_type}</p>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <span className="text-[10px] text-slate-400 flex items-center gap-1">
@@ -131,20 +131,20 @@ export default function Companies() {
                       <Check className="w-3 h-3 mr-1" /> Activar
                     </Button>
                     <button onClick={() => { setEditingCompany(company); setShowCompanyForm(true); }}
-                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-blue-50 flex items-center justify-center">
-                      <Edit2 className="w-3.5 h-3.5 text-slate-500" />
+                      className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center">
+                      <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                     </button>
                     <button onClick={() => deleteCompany(company.id)}
-                      className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 flex items-center justify-center">
+                      className="w-7 h-7 rounded-lg bg-white/5 hover:bg-rose-500/10 flex items-center justify-center">
                       <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>
 
                 {isExp && (
-                  <div className="border-t border-slate-100 px-5 py-3 bg-slate-50/50">
+                  <div className="border-t border-white/10 px-5 py-3 bg-[#0D0E1A]/50">
                     <div className="flex items-center justify-between mb-2">
-                      <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Sucursales</p>
+                      <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Sucursales</p>
                       <button
                         onClick={() => { setParentCompanyId(company.id); setShowBranchForm(true); }}
                         className="text-[11px] text-[#00C7D9] flex items-center gap-1 hover:underline">
@@ -152,21 +152,21 @@ export default function Companies() {
                       </button>
                     </div>
                     {compBranches.length === 0 ? (
-                      <p className="text-[12px] text-slate-400 py-2">Sin sucursales registradas.</p>
+                      <p className="text-[12px] text-slate-500 py-2">Sin sucursales registradas.</p>
                     ) : (
                       <div className="space-y-1.5">
                         {compBranches.map(branch => (
-                          <div key={branch.id} className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-100">
+                          <div key={branch.id} className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-2 border border-white/5">
                             <GitBranch className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                             <div className="flex-1 min-w-0">
-                              <p className="text-[12px] font-medium text-[#1A1A2E]">{branch.name}</p>
+                              <p className="text-[12px] font-medium text-white">{branch.name}</p>
                               <p className="text-[10px] text-slate-400">{branch.city} {branch.address ? `· ${branch.address}` : ""}</p>
                             </div>
                             {branch.is_headquarters && (
                               <span className="text-[10px] bg-[#00C7D9]/10 text-[#00A8BD] px-1.5 py-0.5 rounded-full font-semibold">Casa central</span>
                             )}
                             <button onClick={() => deleteBranch(branch.id)}
-                              className="w-6 h-6 rounded bg-slate-100 hover:bg-rose-50 flex items-center justify-center">
+                              className="w-6 h-6 rounded bg-white/5 hover:bg-rose-500/10 flex items-center justify-center">
                               <X className="w-3 h-3 text-rose-400" />
                             </button>
                           </div>
@@ -252,62 +252,62 @@ function CompanyForm({ company, orgId, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4 p-5">
-        <h2 className="text-base font-bold text-[#1A1A2E] mb-4">{company ? "Editar Empresa" : "Nueva Empresa"}</h2>
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="relative bg-[#1A1A2E] rounded-2xl shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4 p-5 border border-white/10">
+        <h2 className="text-base font-bold text-white mb-4">{company ? "Editar Empresa" : "Nueva Empresa"}</h2>
         <form onSubmit={async e => { e.preventDefault(); setSaving(true); await onSave(form); setSaving(false); }} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <Label className="text-[12px] font-medium text-slate-600">Razón Social *</Label>
-              <Input value={form.business_name} onChange={e => upd("business_name", e.target.value)} required className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Razón Social *</Label>
+              <Input value={form.business_name} onChange={e => upd("business_name", e.target.value)} required className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Nombre Fantasía</Label>
-              <Input value={form.fantasy_name} onChange={e => upd("fantasy_name", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Nombre Fantasía</Label>
+              <Input value={form.fantasy_name} onChange={e => upd("fantasy_name", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">CUIT *</Label>
-              <Input value={form.cuit} onChange={e => upd("cuit", e.target.value)} placeholder="XX-XXXXXXXX-X" required className="mt-1 text-[13px] h-9 font-mono" />
+              <Label className="text-[12px] font-medium text-slate-300">CUIT *</Label>
+              <Input value={form.cuit} onChange={e => upd("cuit", e.target.value)} placeholder="XX-XXXXXXXX-X" required className="mt-1 text-[13px] h-9 font-mono bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Tipo</Label>
-              <select value={form.company_type} onChange={e => upd("company_type", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-slate-200 text-[13px] bg-white">
+              <Label className="text-[12px] font-medium text-slate-300">Tipo</Label>
+              <select value={form.company_type} onChange={e => upd("company_type", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-white/10 text-[13px] bg-white/5 text-white">
                 {Object.entries(COMPANY_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Color identificación</Label>
+              <Label className="text-[12px] font-medium text-slate-300">Color identificación</Label>
               <div className="mt-1 flex gap-1.5 flex-wrap">
                 {COLORS.map(c => (
                   <button type="button" key={c} onClick={() => upd("color", c)}
-                    className={`w-6 h-6 rounded-full border-2 transition-all ${form.color === c ? "border-slate-800 scale-110" : "border-transparent"}`}
+                    className={`w-6 h-6 rounded-full border-2 transition-all ${form.color === c ? "border-white scale-110" : "border-transparent"}`}
                     style={{ backgroundColor: c }} />
                 ))}
               </div>
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Email</Label>
-              <Input type="email" value={form.email} onChange={e => upd("email", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Email</Label>
+              <Input type="email" value={form.email} onChange={e => upd("email", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Teléfono</Label>
-              <Input value={form.phone} onChange={e => upd("phone", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Teléfono</Label>
+              <Input value={form.phone} onChange={e => upd("phone", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div className="col-span-2">
-              <Label className="text-[12px] font-medium text-slate-600">Dirección</Label>
-              <Input value={form.address} onChange={e => upd("address", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Dirección</Label>
+              <Input value={form.address} onChange={e => upd("address", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Ciudad</Label>
-              <Input value={form.city} onChange={e => upd("city", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Ciudad</Label>
+              <Input value={form.city} onChange={e => upd("city", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Provincia</Label>
-              <Input value={form.province} onChange={e => upd("province", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Provincia</Label>
+              <Input value={form.province} onChange={e => upd("province", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="text-xs">Cancelar</Button>
+            <Button type="button" variant="outline" onClick={onClose} className="text-xs bg-white/5 border-white/10 text-white hover:bg-white/10">Cancelar</Button>
             <Button type="submit" disabled={saving} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
               {saving ? "Guardando..." : company ? "Actualizar" : "Crear Empresa"}
             </Button>
@@ -325,40 +325,40 @@ function BranchForm({ companyId, orgId, onSave, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md m-4 p-5">
-        <h2 className="text-base font-bold text-[#1A1A2E] mb-4">Nueva Sucursal</h2>
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="relative bg-[#1A1A2E] rounded-2xl shadow-xl w-full max-w-md m-4 p-5 border border-white/10">
+        <h2 className="text-base font-bold text-white mb-4">Nueva Sucursal</h2>
         <form onSubmit={async e => { e.preventDefault(); setSaving(true); await onSave(form); setSaving(false); }} className="space-y-3">
           <div className="grid grid-cols-2 gap-3">
             <div className="col-span-2">
-              <Label className="text-[12px] font-medium text-slate-600">Nombre *</Label>
-              <Input value={form.name} onChange={e => upd("name", e.target.value)} required className="mt-1 text-[13px] h-9" placeholder="Ej: Casa Central, Sucursal Norte" />
+              <Label className="text-[12px] font-medium text-slate-300">Nombre *</Label>
+              <Input value={form.name} onChange={e => upd("name", e.target.value)} required className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" placeholder="Ej: Casa Central, Sucursal Norte" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Código</Label>
-              <Input value={form.code} onChange={e => upd("code", e.target.value)} className="mt-1 text-[13px] h-9 font-mono" placeholder="SC-001" />
+              <Label className="text-[12px] font-medium text-slate-300">Código</Label>
+              <Input value={form.code} onChange={e => upd("code", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white font-mono" placeholder="SC-001" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Ciudad</Label>
-              <Input value={form.city} onChange={e => upd("city", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Ciudad</Label>
+              <Input value={form.city} onChange={e => upd("city", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div className="col-span-2">
-              <Label className="text-[12px] font-medium text-slate-600">Dirección</Label>
-              <Input value={form.address} onChange={e => upd("address", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Dirección</Label>
+              <Input value={form.address} onChange={e => upd("address", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Responsable</Label>
-              <Input value={form.manager_name} onChange={e => upd("manager_name", e.target.value)} className="mt-1 text-[13px] h-9" />
+              <Label className="text-[12px] font-medium text-slate-300">Responsable</Label>
+              <Input value={form.manager_name} onChange={e => upd("manager_name", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
             </div>
             <div className="flex items-end pb-1">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={form.is_headquarters} onChange={e => upd("is_headquarters", e.target.checked)} className="rounded" />
-                <span className="text-[12px] text-slate-600">Casa central</span>
+                <input type="checkbox" checked={form.is_headquarters} onChange={e => upd("is_headquarters", e.target.checked)} className="rounded bg-white/5 border-white/10" />
+                <span className="text-[12px] text-slate-300">Casa central</span>
               </label>
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="text-xs">Cancelar</Button>
+            <Button type="button" variant="outline" onClick={onClose} className="text-xs bg-white/5 border-white/10 text-white hover:bg-white/10">Cancelar</Button>
             <Button type="submit" disabled={saving} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
               {saving ? "Guardando..." : "Crear Sucursal"}
             </Button>
@@ -386,17 +386,17 @@ function OrgForm({ org, onSave, onClose }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/40" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-xl w-full max-w-md m-4 p-5">
-        <h2 className="text-base font-bold text-[#1A1A2E] mb-4">{org ? "Editar Organización" : "Nueva Organización"}</h2>
+      <div className="relative bg-[#1A1A2E] rounded-2xl shadow-xl border border-white/10 w-full max-w-md m-4 p-5">
+        <h2 className="text-base font-bold text-white mb-4">{org ? "Editar Organización" : "Nueva Organización"}</h2>
         <form onSubmit={async e => { e.preventDefault(); setSaving(true); await onSave(form); setSaving(false); }} className="space-y-3">
           <div>
-            <Label className="text-[12px] font-medium text-slate-600">Nombre *</Label>
-            <Input value={form.name} onChange={e => upd("name", e.target.value)} required className="mt-1 text-[13px] h-9" />
+            <Label className="text-[12px] font-medium text-slate-300">Nombre *</Label>
+            <Input value={form.name} onChange={e => upd("name", e.target.value)} required className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">Tipo</Label>
-              <select value={form.org_type} onChange={e => upd("org_type", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-slate-200 text-[13px] bg-white">
+              <Label className="text-[12px] font-medium text-slate-300">Tipo</Label>
+              <select value={form.org_type} onChange={e => upd("org_type", e.target.value)} className="mt-1 w-full h-9 px-3 rounded-md border border-white/10 text-[13px] bg-white/5 text-white">
                 <option value="estudio_contable">Estudio Contable</option>
                 <option value="grupo_economico">Grupo Económico</option>
                 <option value="empresa_independiente">Empresa Independiente</option>
@@ -404,16 +404,16 @@ function OrgForm({ org, onSave, onClose }) {
               </select>
             </div>
             <div>
-              <Label className="text-[12px] font-medium text-slate-600">CUIT</Label>
-              <Input value={form.cuit} onChange={e => upd("cuit", e.target.value)} className="mt-1 text-[13px] h-9 font-mono" />
+              <Label className="text-[12px] font-medium text-slate-300">CUIT</Label>
+              <Input value={form.cuit} onChange={e => upd("cuit", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white font-mono" />
             </div>
           </div>
           <div>
-            <Label className="text-[12px] font-medium text-slate-600">Email</Label>
-            <Input type="email" value={form.email} onChange={e => upd("email", e.target.value)} className="mt-1 text-[13px] h-9" />
+            <Label className="text-[12px] font-medium text-slate-300">Email</Label>
+            <Input type="email" value={form.email} onChange={e => upd("email", e.target.value)} className="mt-1 text-[13px] h-9 bg-white/5 border-white/10 text-white" />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={onClose} className="text-xs">Cancelar</Button>
+            <Button type="button" variant="outline" onClick={onClose} className="text-xs bg-white/5 border-white/10 text-white hover:bg-white/10">Cancelar</Button>
             <Button type="submit" disabled={saving} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
               {saving ? "Guardando..." : org ? "Actualizar" : "Crear Organización"}
             </Button>
