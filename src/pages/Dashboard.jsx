@@ -9,6 +9,7 @@ import DashboardLiquidador from "@/components/dashboard/DashboardLiquidador";
 import DashboardCliente from "@/components/dashboard/DashboardCliente";
 import DashboardAuditor from "@/components/dashboard/DashboardAuditor";
 import { Shield, Cpu, Activity } from "lucide-react";
+import HelpGuide from "@/components/HelpGuide";
 
 // Mapa rol → componente de dashboard
 const DASHBOARD_BY_ROLE = {
@@ -25,9 +26,9 @@ const DASHBOARD_BY_ROLE = {
 
 export default function Dashboard() {
   const { user, isLoadingAuth } = useAuth();
-  const { activeCompany } = useCompany();
+  const { activeCompany, loading: loadingCompany } = useCompany();
 
-  if (isLoadingAuth) return (
+  if (isLoadingAuth || loadingCompany) return (
     <div className="min-h-screen bg-[#0A0B14] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-10 h-10 border-2 border-violet-500/30 border-t-violet-500 rounded-full animate-spin" />
@@ -35,6 +36,12 @@ export default function Dashboard() {
       </div>
     </div>
   );
+
+  // Redirect to onboarding if no company is set up
+  if (!activeCompany && user) {
+    window.location.href = "/onboarding";
+    return null;
+  }
 
   const role = normalizeRole(user?.role);
   const roleLabel = ROLE_LABELS[role] || "Usuario";
@@ -69,6 +76,7 @@ export default function Dashboard() {
               <Cpu className="w-3 h-3 text-violet-400" />
               <span className="text-[11px] text-white/50">IA Activa</span>
             </div>
+            <HelpGuide />
           </div>
         </div>
       </div>

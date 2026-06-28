@@ -35,13 +35,13 @@ export default function Login() {
   return (
     <AuthLayout
       icon={LogIn}
-      title="Welcome back"
-      subtitle="Log in to your account"
+      title="Iniciar Sesión"
+      subtitle="Accedé a tu cuenta de ContaIA"
       footer={
         <>
-          Don't have an account?{" "}
+          ¿No tenés cuenta?{" "}
           <Link to="/register" className="text-primary font-medium hover:underline">
-            Create one
+            Crear una
           </Link>
         </>
       }
@@ -52,7 +52,7 @@ export default function Login() {
         onClick={handleGoogle}
       >
         <GoogleIcon className="w-5 h-5 mr-2" />
-        Continue with Google
+        Continuar con Google
       </Button>
 
       <div className="relative mb-6">
@@ -60,7 +60,7 @@ export default function Login() {
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-3 text-muted-foreground">or</span>
+          <span className="bg-card px-3 text-muted-foreground">o</span>
         </div>
       </div>
 
@@ -80,7 +80,7 @@ export default function Login() {
               type="email"
               autoComplete="email"
               autoFocus
-              placeholder="you@example.com"
+              placeholder="tu@empresa.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="pl-10 h-12"
@@ -90,9 +90,9 @@ export default function Login() {
         </div>
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">Contraseña</Label>
             <Link to="/forgot-password" className="text-xs text-primary hover:underline">
-              Forgot password?
+              ¿Olvidaste tu contraseña?
             </Link>
           </div>
           <div className="relative">
@@ -113,10 +113,10 @@ export default function Login() {
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              Logging in...
+              Iniciando sesión...
             </>
           ) : (
-            "Log in"
+            "Iniciar Sesión"
           )}
         </Button>
       </form>
