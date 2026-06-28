@@ -1,0 +1,71 @@
+{
+  "name": "NormativaUpdate",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "resolucion_general",
+        "decreto",
+        "ley",
+        "circular",
+        "nota",
+        "jurisprudencia",
+        "otro"
+      ]
+    },
+    "number": {
+      "type": "string",
+      "description": "N\u00famero de resoluci\u00f3n o ley"
+    },
+    "organism": {
+      "type": "string",
+      "enum": [
+        "arca",
+        "ministerio_economia",
+        "poder_ejecutivo",
+        "tribunal_fiscal",
+        "csjn",
+        "otro"
+      ],
+      "default": "arca"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "full_text": {
+      "type": "string"
+    },
+    "impact_areas": {
+      "type": "string",
+      "description": "\u00c1reas afectadas: iva,iibb,ganancias,etc (JSON)"
+    },
+    "impact_level": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "default": "medium"
+    },
+    "ai_analysis": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title",
+    "type"
+  ]
+}

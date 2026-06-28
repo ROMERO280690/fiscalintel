@@ -6,34 +6,14 @@ import PageHeader from "@/components/shared/PageHeader";
 import ReactMarkdown from "react-markdown";
 
 const AGENTS = [
-  {
-    id: "agente_iva",
-    name: "Agente IVA",
-    description: "Débito/crédito fiscal, DDJJ IVA, comprobantes",
-    color: "bg-blue-50 text-blue-700 border-blue-200",
-    icon: "💼",
-  },
-  {
-    id: "agente_laboral",
-    name: "Agente Laboral",
-    description: "Sueldos, F931, ART, convenios colectivos",
-    color: "bg-purple-50 text-purple-700 border-purple-200",
-    icon: "👥",
-  },
-  {
-    id: "agente_arca",
-    name: "Agente ARCA",
-    description: "Trámites ARCA, VEP, padrones, servicios web",
-    color: "bg-amber-50 text-amber-700 border-amber-200",
-    icon: "🏛️",
-  },
-  {
-    id: "agente_normativo",
-    name: "Agente Normativo",
-    description: "RG ARCA, leyes, jurisprudencia tributaria",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200",
-    icon: "📋",
-  },
+  { id: "agente_iva", name: "Agente IVA", description: "Débito/crédito fiscal, DDJJ IVA, comprobantes", icon: "💼" },
+  { id: "agente_laboral", name: "Agente Laboral", description: "Sueldos, F931, ART, convenios colectivos", icon: "👥" },
+  { id: "agente_arca", name: "Agente ARCA", description: "Trámites ARCA, VEP, padrones, servicios web", icon: "🏛️" },
+  { id: "agente_normativo", name: "Agente Normativo", description: "RG ARCA, leyes, jurisprudencia tributaria", icon: "📋" },
+  { id: "agente_contable", name: "Agente Contable", description: "Asientos, balances, plan de cuentas, FACPCE", icon: "📒" },
+  { id: "agente_auditor", name: "Agente Auditor", description: "Auditoría fiscal, riesgos, inconsistencias", icon: "🔍" },
+  { id: "agente_documental", name: "Agente Documental", description: "Clasificación OCR, validez comprobantes, CAE", icon: "📄" },
+  { id: "agente_financiero", name: "Agente Financiero", description: "Tesorería, flujo de caja, ratios financieros", icon: "📈" },
 ];
 
 export default function Agents() {

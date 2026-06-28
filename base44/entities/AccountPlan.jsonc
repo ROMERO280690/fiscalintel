@@ -1,0 +1,56 @@
+{
+  "name": "AccountPlan",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string",
+      "description": "C\u00f3digo de cuenta (ej: 1.1.01)"
+    },
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "activo",
+        "pasivo",
+        "patrimonio",
+        "ingreso",
+        "egreso",
+        "resultado"
+      ],
+      "default": "activo"
+    },
+    "subtype": {
+      "type": "string",
+      "description": "Subcategor\u00eda (corriente, no corriente, etc.)"
+    },
+    "parent_code": {
+      "type": "string",
+      "description": "C\u00f3digo de cuenta padre"
+    },
+    "level": {
+      "type": "number",
+      "default": 1
+    },
+    "allows_entries": {
+      "type": "boolean",
+      "default": true
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "code",
+    "name",
+    "type"
+  ]
+}

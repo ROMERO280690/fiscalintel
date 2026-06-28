@@ -4,7 +4,8 @@ import {
   LayoutDashboard, Users, FileText, FolderOpen, Receipt,
   Building2, Calculator, ClipboardList, Shield,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
-  Bot, Menu, X, Inbox, DollarSign, FileCheck, Landmark, TrendingUp, Sparkles
+  Bot, Menu, X, Inbox, FileCheck, Landmark, TrendingUp, Sparkles,
+  BookOpen, Globe, Activity, DollarSign
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
@@ -54,10 +55,19 @@ const navSections = [
     ]
   },
   {
-    label: "IA",
+    label: "IA & Normativa",
     items: [
       { icon: Sparkles, label: "Agentes Especializados", path: "/agents" },
       { icon: Bot, label: "Asistente IA", path: "/ai-assistant" },
+      { icon: Globe, label: "Motor Normativo", path: "/normativa" },
+    ]
+  },
+  {
+    label: "Sistema",
+    items: [
+      { icon: BookOpen, label: "Plan de Cuentas", path: "/account-plan" },
+      { icon: Activity, label: "Auditoría & Logs", path: "/audit" },
+      { icon: Shield, label: "Portal del Cliente", path: "/portal" },
     ]
   }
 ];
