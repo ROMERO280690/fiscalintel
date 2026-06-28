@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, BookOpen, Bot, Loader2 } from "lucide-react";
@@ -21,27 +23,14 @@ const entryTypeLabels = {
 
 export default function Accounting() {
   const { canViewModule, can } = usePermissions();
+  const { activeCompany } = useCompany();
+  const { data: entries, loading, reload: reloadEntries } = useCompanyData("AccountEntry", {}, "-date", 300);
+  const { data: clients, reload: reloadClients } = useCompanyData("Client");
+  const load = () => { reloadEntries(); reloadClients(); };
   const [activeTab, setActiveTab] = useState("Diario");
-  const [entries, setEntries] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [selectedClient, setSelectedClient] = useState("");
   const [generating, setGenerating] = useState(false);
-
-  const load = async () => {
-    try {
-      const [e, c] = await Promise.all([
-        base44.entities.AccountEntry.list("-date", 300),
-        base44.entities.Client.list("-created_date", 200),
-      ]);
-      setEntries(e);
-      setClients(c);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
 
   const filteredEntries = selectedClient ? entries.filter(e => e.client_id === selectedClient) : entries;
 
@@ -84,6 +73,7 @@ Respondé con un array de asientos.`,
           result.entries.map(e => ({
             ...e,
             client_id: selectedClient,
+            company_id: activeCompany?.id,
             status: "draft",
             ai_suggested: true,
             period: new Date().toLocaleDateString("es-AR", { month: "2-digit", year: "numeric" })
@@ -227,7 +217,7 @@ Respondé con un array de asientos.`,
         </div>
       )}
 
-      {showForm && <EntryForm clients={clients} onSave={async (data) => { const entry = await base44.entities.AccountEntry.create(data); logAction("create", `Creó asiento: ${data.description} — $${data.amount}`, { entityType: "AccountEntry", entityId: entry?.id, clientId: data.client_id, newData: { description: data.description, account_debit: data.account_debit, account_credit: data.account_credit, amount: data.amount }, module: "Contabilidad" }); setShowForm(false); load(); }} onClose={() => setShowForm(false)} />}
+      {showForm && <EntryForm clients={clients} onSave={async (data) => { const entry = await base44.entities.AccountEntry.create({ ...data, company_id: activeCompany?.id }); logAction("create", `Creó asiento: ${data.description} — $${data.amount}`, { entityType: "AccountEntry", entityId: entry?.id, clientId: data.client_id, newData: { description: data.description, account_debit: data.account_debit, account_credit: data.account_credit, amount: data.amount }, module: "Contabilidad" }); setShowForm(false); load(); }} onClose={() => setShowForm(false)} />}
     </div>
   );
 }

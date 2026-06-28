@@ -1,0 +1,53 @@
+{
+  "name": "Branch",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string"
+    },
+    "organization_id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "code": {
+      "type": "string",
+      "description": "C\u00f3digo interno"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "manager_name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive"
+      ],
+      "default": "active"
+    },
+    "is_headquarters": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "company_id",
+    "name"
+  ]
+}

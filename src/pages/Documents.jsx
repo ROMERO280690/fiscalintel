@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Search, Upload, FileText, Bot, CheckCircle, XCircle } from "lucide-react";
@@ -21,27 +23,14 @@ const docTypeLabels = {
 
 export default function Documents() {
   const { canViewModule } = usePermissions();
-  const [documents, setDocuments] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { activeCompany } = useCompany();
+  const { data: documents, loading, reload: reloadDocs } = useCompanyData("Document");
+  const { data: clients, reload: reloadClients } = useCompanyData("Client");
+  const load = () => { reloadDocs(); reloadClients(); };
   const [search, setSearch] = useState("");
   const [showUpload, setShowUpload] = useState(false);
   const [selectedDoc, setSelectedDoc] = useState(null);
   const [statusFilter, setStatusFilter] = useState("");
-
-  const load = async () => {
-    try {
-      const [docs, cls] = await Promise.all([
-        base44.entities.Document.list("-created_date", 200),
-        base44.entities.Client.list("-created_date", 200),
-      ]);
-      setDocuments(docs);
-      setClients(cls);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
 
   const getClientName = (id) => clients.find(c => c.id === id)?.business_name || "—";
 

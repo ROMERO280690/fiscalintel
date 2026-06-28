@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Users, Loader2, Bot, CheckCircle } from "lucide-react";
@@ -15,29 +17,16 @@ const tabs = ["Empleados", "Liquidaciones", "F931"];
 
 export default function Payroll() {
   const { canViewModule, can } = usePermissions();
+  const { activeCompany } = useCompany();
+  const { data: employees, loading: loadingEmp, reload: reloadEmp } = useCompanyData("Employee");
+  const { data: payslips, reload: reloadPayslips } = useCompanyData("Payslip");
+  const { data: clients, reload: reloadClients } = useCompanyData("Client");
+  const loading = loadingEmp;
   const [activeTab, setActiveTab] = useState("Empleados");
-  const [employees, setEmployees] = useState([]);
-  const [payslips, setPayslips] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [showEmpForm, setShowEmpForm] = useState(false);
   const [generating, setGenerating] = useState(null);
 
-  const load = async () => {
-    try {
-      const [e, p, c] = await Promise.all([
-        base44.entities.Employee.list("-created_date", 200),
-        base44.entities.Payslip.list("-created_date", 200),
-        base44.entities.Client.list("-created_date", 200),
-      ]);
-      setEmployees(e);
-      setPayslips(p);
-      setClients(c);
-    } catch (err) { console.error(err); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
+  const load = () => { reloadEmp(); reloadPayslips(); reloadClients(); };
 
   const getClientName = (id) => clients.find(c => c.id === id)?.business_name || "—";
 
@@ -80,6 +69,7 @@ Respondé en JSON con todos los montos.`,
 
       const ps = await base44.entities.Payslip.create({
         client_id: employee.client_id,
+        company_id: activeCompany?.id,
         employee_id: employee.id,
         employee_name: employee.full_name,
         period,
@@ -205,7 +195,7 @@ Respondé en JSON con todos los montos.`,
         <F931View payslips={payslips} clients={clients} />
       )}
 
-      {showEmpForm && <EmployeeForm clients={clients} onSave={async (data) => { const emp = await base44.entities.Employee.create(data); logAction("create", `Creó empleado: ${data.full_name} (CUIL: ${data.cuil})`, { entityType: "Employee", entityId: emp?.id, clientId: data.client_id, newData: { full_name: data.full_name, cuil: data.cuil, base_salary: data.base_salary }, module: "Sueldos" }); setShowEmpForm(false); load(); }} onClose={() => setShowEmpForm(false)} />}
+      {showEmpForm && <EmployeeForm clients={clients} onSave={async (data) => { const emp = await base44.entities.Employee.create({ ...data, company_id: activeCompany?.id }); logAction("create", `Creó empleado: ${data.full_name} (CUIL: ${data.cuil})`, { entityType: "Employee", entityId: emp?.id, clientId: data.client_id, newData: { full_name: data.full_name, cuil: data.cuil, base_salary: data.base_salary }, module: "Sueldos" }); setShowEmpForm(false); load(); }} onClose={() => setShowEmpForm(false)} />}
     </div>
   );
 }

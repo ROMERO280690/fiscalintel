@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Search, Users } from "lucide-react";
@@ -26,26 +28,13 @@ const clientTypeLabels = {
 
 export default function Clients() {
   const { canViewModule, can } = usePermissions();
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { activeCompany } = useCompany();
+  const { data: clients, loading, reload: loadClients } = useCompanyData("Client");
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
   const [selectedClient, setSelectedClient] = useState(null);
   const [filterType, setFilterType] = useState("");
-
-  const loadClients = async () => {
-    try {
-      const data = await base44.entities.Client.list("-created_date", 200);
-      setClients(data);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { loadClients(); }, []);
 
   const filtered = clients.filter(c => {
     const matchSearch = !search || 
@@ -56,11 +45,13 @@ export default function Clients() {
   });
 
   const handleSave = async (data) => {
+    // Inject company_id for isolation
+    const payload = { ...data, company_id: activeCompany?.id };
     if (editingClient) {
-      await base44.entities.Client.update(editingClient.id, data);
+      await base44.entities.Client.update(editingClient.id, payload);
       logAction("update", `Editó cliente: ${data.business_name}`, { entityType: "Client", entityId: editingClient.id, clientId: editingClient.id, clientName: data.business_name, oldData: { business_name: editingClient.business_name, cuit: editingClient.cuit }, newData: { business_name: data.business_name, cuit: data.cuit }, module: "Clientes" });
     } else {
-      const created = await base44.entities.Client.create(data);
+      const created = await base44.entities.Client.create(payload);
       logAction("create", `Creó cliente: ${data.business_name} (CUIT: ${data.cuit})`, { entityType: "Client", entityId: created?.id, clientId: created?.id, clientName: data.business_name, newData: { business_name: data.business_name, cuit: data.cuit, client_type: data.client_type }, module: "Clientes" });
     }
     setShowForm(false);
@@ -88,7 +79,7 @@ export default function Clients() {
 
   return (
     <div>
-      <PageHeader title="Clientes" subtitle={`${clients.length} clientes registrados`}>
+      <PageHeader title="Clientes" subtitle={`${clients.length} clientes${activeCompany ? ` de ${activeCompany.fantasy_name || activeCompany.business_name}` : ""}`}>
         {can("clients", "create") && (
           <Button onClick={() => { setEditingClient(null); setShowForm(true); }} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
             <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Cliente

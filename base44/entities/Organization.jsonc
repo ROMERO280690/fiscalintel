@@ -1,0 +1,70 @@
+{
+  "name": "Organization",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nombre del estudio o grupo econ\u00f3mico"
+    },
+    "org_type": {
+      "type": "string",
+      "enum": [
+        "estudio_contable",
+        "grupo_economico",
+        "empresa_independiente",
+        "holding"
+      ],
+      "default": "estudio_contable"
+    },
+    "cuit": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "owner_user_id": {
+      "type": "string",
+      "description": "User ID del due\u00f1o/admin principal"
+    },
+    "plan": {
+      "type": "string",
+      "enum": [
+        "free",
+        "starter",
+        "professional",
+        "enterprise"
+      ],
+      "default": "free"
+    },
+    "max_companies": {
+      "type": "number",
+      "default": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "trial"
+      ],
+      "default": "active"
+    },
+    "settings": {
+      "type": "string",
+      "description": "JSON configuraci\u00f3n general"
+    }
+  },
+  "required": [
+    "name",
+    "org_type"
+  ]
+}

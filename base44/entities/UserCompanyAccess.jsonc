@@ -1,0 +1,57 @@
+{
+  "name": "UserCompanyAccess",
+  "type": "object",
+  "properties": {
+    "user_id": {
+      "type": "string"
+    },
+    "user_email": {
+      "type": "string"
+    },
+    "organization_id": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string",
+      "description": "null = acceso a toda la organizaci\u00f3n"
+    },
+    "branch_id": {
+      "type": "string",
+      "description": "null = acceso a toda la empresa"
+    },
+    "role": {
+      "type": "string",
+      "enum": [
+        "super_admin",
+        "estudio_contable",
+        "contador",
+        "auditor",
+        "administrativo",
+        "cliente",
+        "rrhh"
+      ],
+      "default": "contador"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "suspended",
+        "pending"
+      ],
+      "default": "active"
+    },
+    "granted_by": {
+      "type": "string",
+      "description": "User ID quien otorg\u00f3 acceso"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "user_id",
+    "organization_id"
+  ]
+}

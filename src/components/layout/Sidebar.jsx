@@ -11,6 +11,7 @@ import { base44 } from "@/api/base44Client";
 import { usePermissions } from "@/hooks/usePermissions";
 import { ROLE_LABELS, normalizeRole } from "@/lib/permissions";
 import { useAuth } from "@/lib/AuthContext";
+import CompanySelector from "@/components/layout/CompanySelector";
 
 // path → module key para el sistema de permisos
 const PATH_MODULE = {
@@ -92,9 +93,10 @@ const navSections = [
   {
     label: "Sistema",
     items: [
-      { icon: BookOpen, label: "Plan de Cuentas",    path: "/account-plan" },
-      { icon: Activity, label: "Auditoría & Logs",   path: "/audit" },
-      { icon: Shield,   label: "Portal del Cliente", path: "/portal" },
+      { icon: Building2, label: "Empresas & Sucursales", path: "/companies" },
+      { icon: BookOpen,  label: "Plan de Cuentas",       path: "/account-plan" },
+      { icon: Activity,  label: "Auditoría & Logs",      path: "/audit" },
+      { icon: Shield,    label: "Portal del Cliente",    path: "/portal" },
     ]
   }
 ];
@@ -147,6 +149,11 @@ export default function Sidebar() {
         >
           {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
         </button>
+      </div>
+
+      {/* Company Selector */}
+      <div className="px-2.5 py-2 border-b border-white/10">
+        <CompanySelector collapsed={collapsed} />
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-4">

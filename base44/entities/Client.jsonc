@@ -2,6 +2,10 @@
   "name": "Client",
   "type": "object",
   "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID de la empresa (aislamiento multiempresa)"
+    },
     "business_name": {
       "type": "string",
       "description": "Raz\u00f3n social"

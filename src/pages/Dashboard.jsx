@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { usePermissions } from "@/hooks/usePermissions";
 import PermissionGuard from "@/components/shared/PermissionGuard";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import {
   Bot, CheckCircle, Clock, AlertTriangle, Zap, FileText,
-  Users, ArrowRight, Loader2, Play, Eye
+  Users, ArrowRight, Loader2, Play, Eye, Building2
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -12,35 +14,23 @@ import StatusBadge from "@/components/shared/StatusBadge";
 
 export default function Dashboard() {
   const { canViewModule } = usePermissions();
-  const [clients, setClients] = useState([]);
-  const [documents, setDocuments] = useState([]);
-  const [filings, setFilings] = useState([]);
-  const [deadlines, setDeadlines] = useState([]);
-  const [payslips, setPayslips] = useState([]);
-  const [entries, setEntries] = useState([]);
+  const { activeCompany } = useCompany();
+  const { data: clients } = useCompanyData("Client", {}, "-created_date", 100);
+  const { data: documents, reload: reloadDocs } = useCompanyData("Document", {}, "-created_date", 100);
+  const { data: filings, reload: reloadFilings } = useCompanyData("TaxFiling", {}, "-created_date", 100);
+  const { data: deadlines } = useCompanyData("TaxDeadline", {}, "-due_date", 100);
+  const { data: payslips } = useCompanyData("Payslip", {}, "-created_date", 100);
+  const { data: entries } = useCompanyData("AccountEntry", {}, "-created_date", 100);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [runningAI, setRunningAI] = useState(false);
   const [aiLog, setAiLog] = useState([]);
 
-  const load = async () => {
-    try {
-      const [c, d, f, dl, ps, ae, u] = await Promise.all([
-        base44.entities.Client.list("-created_date", 100),
-        base44.entities.Document.list("-created_date", 100),
-        base44.entities.TaxFiling.list("-created_date", 100),
-        base44.entities.TaxDeadline.list("-due_date", 100),
-        base44.entities.Payslip.list("-created_date", 100),
-        base44.entities.AccountEntry.list("-created_date", 100),
-        base44.auth.me(),
-      ]);
-      setClients(c); setDocuments(d); setFilings(f);
-      setDeadlines(dl); setPayslips(ps); setEntries(ae); setUser(u);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
+  const load = () => { reloadDocs(); reloadFilings(); };
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    base44.auth.me().then(u => { setUser(u); setLoading(false); }).catch(() => setLoading(false));
+  }, []);
 
   // Items pending professional review
   const pendingReview = [
@@ -160,6 +150,35 @@ Calculá débito fiscal, crédito fiscal, impuesto a pagar. Identificá riesgos.
 
   return (
     <div className="space-y-5">
+
+      {/* Active Company Banner */}
+      {activeCompany && (
+        <div className="flex items-center gap-3 bg-white rounded-xl px-4 py-2.5 shadow-sm border border-slate-100">
+          <div
+            className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[10px] font-bold flex-shrink-0"
+            style={{ backgroundColor: activeCompany.color || "#00C7D9" }}
+          >
+            {activeCompany.fantasy_name?.[0] || activeCompany.business_name?.[0] || "E"}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[12px] font-semibold text-[#1A1A2E] truncate">
+              {activeCompany.fantasy_name || activeCompany.business_name}
+            </p>
+            <p className="text-[10px] text-slate-400 font-mono">{activeCompany.cuit}</p>
+          </div>
+          <span className="text-[10px] text-slate-400">Empresa activa</span>
+          <Link to="/companies" className="text-[11px] text-[#00C7D9] hover:underline flex items-center gap-0.5 flex-shrink-0">
+            <Building2 className="w-3 h-3" /> Cambiar
+          </Link>
+        </div>
+      )}
+      {!activeCompany && (
+        <Link to="/companies" className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hover:bg-amber-100 transition-colors">
+          <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
+          <p className="text-[12px] font-medium text-amber-700 flex-1">No hay empresa activa. Los datos mostrados son globales.</p>
+          <span className="text-[11px] text-amber-600 font-semibold">Crear empresa →</span>
+        </Link>
+      )}
 
       {/* Header */}
       <div className="bg-gradient-to-r from-[#1A1A2E] to-[#16213E] rounded-2xl p-5 text-white">

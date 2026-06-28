@@ -4,6 +4,7 @@ import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
+import { CompanyProvider } from '@/lib/CompanyContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -38,6 +39,7 @@ import NormativaMotor from '@/pages/NormativaMotor';
 import AccountPlanPage from '@/pages/AccountPlanPage';
 import AuditPage from '@/pages/AuditPage';
 import ClientPortal from '@/pages/ClientPortal';
+import Companies from '@/pages/Companies';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -90,6 +92,7 @@ const AuthenticatedApp = () => {
           <Route path="/account-plan" element={<AccountPlanPage />} />
           <Route path="/audit" element={<AuditPage />} />
           <Route path="/portal" element={<ClientPortal />} />
+          <Route path="/companies" element={<Companies />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
@@ -100,6 +103,7 @@ const AuthenticatedApp = () => {
 function App() {
   return (
     <AuthProvider>
+      <CompanyProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
           <ScrollToTop />
@@ -107,6 +111,7 @@ function App() {
         </Router>
         <Toaster />
       </QueryClientProvider>
+      </CompanyProvider>
     </AuthProvider>
   )
 }

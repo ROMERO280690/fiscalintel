@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Search, Receipt, Bot, Loader2 } from "lucide-react";
@@ -23,27 +25,14 @@ const filingTypeLabels = {
 
 export default function TaxFilings() {
   const { canViewModule, can } = usePermissions();
-  const [filings, setFilings] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { activeCompany } = useCompany();
+  const { data: filings, loading, reload: reloadFilings } = useCompanyData("TaxFiling");
+  const { data: clients, reload: reloadClients } = useCompanyData("Client");
+  const load = () => { reloadFilings(); reloadClients(); };
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [generating, setGenerating] = useState(null);
-
-  const load = async () => {
-    try {
-      const [f, c] = await Promise.all([
-        base44.entities.TaxFiling.list("-created_date", 200),
-        base44.entities.Client.list("-created_date", 200),
-      ]);
-      setFilings(f);
-      setClients(c);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
 
   const filtered = filings.filter(f => {
     const matchSearch = !search || f.client_name?.toLowerCase().includes(search.toLowerCase()) || f.period?.includes(search);
@@ -57,6 +46,7 @@ export default function TaxFilings() {
       ...data,
       client_name: client?.business_name || "",
       status: "draft",
+      company_id: activeCompany?.id,
     });
     logAction("create", `Creó DDJJ ${filingTypeLabels[data.filing_type]} período ${data.period} — ${client?.business_name}`, { entityType: "TaxFiling", entityId: filing?.id, clientId: data.client_id, clientName: client?.business_name, newData: { filing_type: data.filing_type, period: data.period }, module: "DDJJ" });
     setShowForm(false);

@@ -1,0 +1,85 @@
+{
+  "name": "Company",
+  "type": "object",
+  "properties": {
+    "organization_id": {
+      "type": "string",
+      "description": "ID de la organizaci\u00f3n/estudio que la administra"
+    },
+    "business_name": {
+      "type": "string",
+      "description": "Raz\u00f3n social"
+    },
+    "fantasy_name": {
+      "type": "string"
+    },
+    "cuit": {
+      "type": "string"
+    },
+    "company_type": {
+      "type": "string",
+      "enum": [
+        "monotributista",
+        "responsable_inscripto",
+        "autonomo",
+        "sas",
+        "srl",
+        "sa",
+        "cooperativa",
+        "agro",
+        "pyme",
+        "otro"
+      ],
+      "default": "srl"
+    },
+    "activity": {
+      "type": "string"
+    },
+    "activity_code": {
+      "type": "string"
+    },
+    "email": {
+      "type": "string"
+    },
+    "phone": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "province": {
+      "type": "string"
+    },
+    "fiscal_start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "logo_url": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "inactive",
+        "suspended"
+      ],
+      "default": "active"
+    },
+    "color": {
+      "type": "string",
+      "description": "Color de identificaci\u00f3n hex"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "organization_id",
+    "business_name",
+    "cuit"
+  ]
+}

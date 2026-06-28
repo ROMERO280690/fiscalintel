@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PermissionGuard from "@/components/shared/PermissionGuard";
 import { usePermissions } from "@/hooks/usePermissions";
+import { useCompanyData } from "@/hooks/useCompanyData";
+import { useCompany } from "@/lib/CompanyContext";
 import { base44 } from "@/api/base44Client";
 import { Plus, Search, CheckSquare, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -21,27 +23,16 @@ const statusTabs = [
 
 export default function Tasks() {
   const { canViewModule } = usePermissions();
-  const [tasks, setTasks] = useState([]);
-  const [clients, setClients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { activeCompany } = useCompany();
+  const { data: tasks, loading: loadingTasks, reload: reloadTasks } = useCompanyData("Task");
+  const { data: clients, reload: reloadClients } = useCompanyData("Client");
+  const loading = loadingTasks;
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
 
-  const load = async () => {
-    try {
-      const [t, c] = await Promise.all([
-        base44.entities.Task.list("-created_date", 200),
-        base44.entities.Client.list("-created_date", 200),
-      ]);
-      setTasks(t);
-      setClients(c);
-    } catch (e) { console.error(e); }
-    finally { setLoading(false); }
-  };
-
-  useEffect(() => { load(); }, []);
+  const load = () => { reloadTasks(); reloadClients(); };
 
   const filtered = tasks.filter(t => {
     const matchSearch = !search || t.title?.toLowerCase().includes(search.toLowerCase());
@@ -50,10 +41,11 @@ export default function Tasks() {
   });
 
   const handleSave = async (data) => {
+    const payload = { ...data, company_id: activeCompany?.id };
     if (editingTask) {
-      await base44.entities.Task.update(editingTask.id, data);
+      await base44.entities.Task.update(editingTask.id, payload);
     } else {
-      await base44.entities.Task.create(data);
+      await base44.entities.Task.create(payload);
     }
     setShowForm(false);
     setEditingTask(null);
