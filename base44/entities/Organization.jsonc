@@ -47,7 +47,7 @@
     },
     "max_companies": {
       "type": "number",
-      "default": 1
+      "default": 10
     },
     "status": {
       "type": "string",
@@ -56,11 +56,26 @@
         "suspended",
         "trial"
       ],
-      "default": "active"
+      "default": "trial"
     },
     "settings": {
       "type": "string",
       "description": "JSON configuraci\u00f3n general"
+    },
+    "trial_start_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Inicio del per\u00edodo de prueba"
+    },
+    "trial_end_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fin del per\u00edodo de prueba (60 d\u00edas)"
+    },
+    "trial_expired": {
+      "type": "boolean",
+      "default": false,
+      "description": "Trial expirado"
     }
   },
   "required": [

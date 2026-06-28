@@ -11,6 +11,7 @@ export function CompanyProvider({ children }) {
   const [activeCompany, setActiveCompanyState] = useState(null);
   const [activeBranch, setActiveBranchState] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [trialInfo, setTrialInfo] = useState(null);
 
   const loadAll = useCallback(async () => {
     try {
@@ -22,6 +23,19 @@ export function CompanyProvider({ children }) {
       setOrganizations(orgs);
       setCompanies(comps);
       setBranches(brs);
+
+      // Calculate trial info
+      const firstOrg = orgs[0] || null;
+      if (firstOrg?.trial_end_date) {
+        const today = new Date();
+        const endDate = new Date(firstOrg.trial_end_date);
+        const daysLeft = Math.ceil((endDate - today) / (1000 * 60 * 60 * 24));
+        setTrialInfo({
+          daysLeft,
+          endDate: firstOrg.trial_end_date,
+          expired: firstOrg.trial_expired || daysLeft < 0,
+        });
+      }
 
       // Restore from localStorage
       const savedOrgId = localStorage.getItem("contaia_active_org");
@@ -92,6 +106,7 @@ export function CompanyProvider({ children }) {
       activeCompany,
       activeBranch,
       loading,
+      trialInfo,
       // Setters
       setActiveOrg,
       setActiveCompany,

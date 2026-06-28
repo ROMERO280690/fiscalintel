@@ -52,12 +52,18 @@ export default function Onboarding() {
     e.preventDefault();
     setLoading(true);
     try {
+      const trialEnd = new Date();
+      trialEnd.setDate(trialEnd.getDate() + 60);
+      
       const org = await base44.entities.Organization.create({
         ...orgData,
         owner_user_id: user?.id,
-        status: "active",
+        status: "trial",
         plan: "free",
         max_companies: 10,
+        trial_start_date: new Date().toISOString().split('T')[0],
+        trial_end_date: trialEnd.toISOString().split('T')[0],
+        trial_expired: false,
       });
 
       // Update user role
