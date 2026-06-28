@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { Plus, Search, CheckSquare, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +20,7 @@ const statusTabs = [
 ];
 
 export default function Tasks() {
+  const { canViewModule } = usePermissions();
   const [tasks, setTasks] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,6 +72,8 @@ export default function Tasks() {
     await base44.entities.Task.delete(id);
     load();
   };
+
+  if (!canViewModule("tasks")) return <PermissionGuard module="tasks" />;
 
   if (loading) {
     return (

@@ -1,38 +1,65 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, Users, FileText, FolderOpen, Receipt,
+  LayoutDashboard, Users, FolderOpen, Receipt,
   Building2, Calculator, ClipboardList, Shield,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
   Bot, Menu, X, Inbox, FileCheck, Landmark, TrendingUp, Sparkles,
-  BookOpen, Globe, Activity, DollarSign
+  BookOpen, Globe, Activity
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { usePermissions } from "@/hooks/usePermissions";
+import { ROLE_LABELS, normalizeRole } from "@/lib/permissions";
+import { useAuth } from "@/lib/AuthContext";
+
+// path → module key para el sistema de permisos
+const PATH_MODULE = {
+  "/":              "dashboard",
+  "/review":        "review",
+  "/gemelo-fiscal": "gemelo_fiscal",
+  "/clients":       "clients",
+  "/tasks":         "tasks",
+  "/documents":     "documents",
+  "/invoicing":     "invoicing",
+  "/tax-filings":   "tax_filings",
+  "/iibb-convenio": "iibb",
+  "/tax-calendar":  "tax_calendar",
+  "/payroll":       "payroll",
+  "/accounting":    "accounting",
+  "/treasury":      "treasury",
+  "/corporate":     "corporate",
+  "/agents":        "agents",
+  "/ai-assistant":  "ai_assistant",
+  "/normativa":     "normativa",
+  "/account-plan":  "account_plan",
+  "/audit":         "audit",
+  "/portal":        "portal",
+};
 
 const navSections = [
   {
     label: "Principal",
     items: [
-      { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-      { icon: Inbox, label: "Bandeja de Revisión", path: "/review" },
-      { icon: Shield, label: "Gemelo Fiscal", path: "/gemelo-fiscal" },
-      { icon: Users, label: "Clientes", path: "/clients" },
-      { icon: CheckSquare, label: "Tareas", path: "/tasks" },
+      { icon: LayoutDashboard, label: "Dashboard",           path: "/" },
+      { icon: Inbox,           label: "Bandeja de Revisión", path: "/review" },
+      { icon: Shield,          label: "Gemelo Fiscal",       path: "/gemelo-fiscal" },
+      { icon: Users,           label: "Clientes",            path: "/clients" },
+      { icon: CheckSquare,     label: "Tareas",              path: "/tasks" },
     ]
   },
   {
     label: "Documentos & Facturación",
     items: [
-      { icon: FolderOpen, label: "Expediente Digital", path: "/documents" },
-      { icon: FileCheck, label: "Facturación Electrónica", path: "/invoicing" },
+      { icon: FolderOpen, label: "Expediente Digital",      path: "/documents" },
+      { icon: FileCheck,  label: "Facturación Electrónica", path: "/invoicing" },
     ]
   },
   {
     label: "Impuestos",
     items: [
-      { icon: Receipt, label: "DDJJ / IVA / Ganancias", path: "/tax-filings" },
+      { icon: Receipt,    label: "DDJJ / IVA / Ganancias",   path: "/tax-filings" },
       { icon: Calculator, label: "IIBB & Conv. Multilateral", path: "/iibb-convenio" },
-      { icon: BarChart3, label: "Vencimientos", path: "/tax-calendar" },
+      { icon: BarChart3,  label: "Vencimientos",              path: "/tax-calendar" },
     ]
   },
   {
@@ -45,7 +72,7 @@ const navSections = [
     label: "Contabilidad & Tesorería",
     items: [
       { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
-      { icon: TrendingUp, label: "Tesorería", path: "/treasury" },
+      { icon: TrendingUp,    label: "Tesorería",      path: "/treasury" },
     ]
   },
   {
@@ -58,16 +85,16 @@ const navSections = [
     label: "IA & Normativa",
     items: [
       { icon: Sparkles, label: "Agentes Especializados", path: "/agents" },
-      { icon: Bot, label: "Asistente IA", path: "/ai-assistant" },
-      { icon: Globe, label: "Motor Normativo", path: "/normativa" },
+      { icon: Bot,      label: "Asistente IA",           path: "/ai-assistant" },
+      { icon: Globe,    label: "Motor Normativo",        path: "/normativa" },
     ]
   },
   {
     label: "Sistema",
     items: [
-      { icon: BookOpen, label: "Plan de Cuentas", path: "/account-plan" },
-      { icon: Activity, label: "Auditoría & Logs", path: "/audit" },
-      { icon: Shield, label: "Portal del Cliente", path: "/portal" },
+      { icon: BookOpen, label: "Plan de Cuentas",    path: "/account-plan" },
+      { icon: Activity, label: "Auditoría & Logs",   path: "/audit" },
+      { icon: Shield,   label: "Portal del Cliente", path: "/portal" },
     ]
   }
 ];
@@ -76,11 +103,24 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const { user } = useAuth();
+  const { canViewModule, role } = usePermissions();
 
   const isActive = (path) => {
     if (path === "/") return location.pathname === "/";
     return location.pathname.startsWith(path.split("?")[0]);
   };
+
+  // Filtra secciones según permisos del rol
+  const visibleSections = navSections.map(section => ({
+    ...section,
+    items: section.items.filter(item => {
+      const mod = PATH_MODULE[item.path];
+      return mod ? canViewModule(mod) : true;
+    })
+  })).filter(section => section.items.length > 0);
+
+  const roleLabel = ROLE_LABELS[normalizeRole(user?.role || "cliente")] || "Usuario";
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
@@ -110,7 +150,7 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3 px-2.5 space-y-4">
-        {navSections.map((section) => (
+        {visibleSections.map((section) => (
           <div key={section.label}>
             {!collapsed && (
               <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-widest text-slate-500">
@@ -142,7 +182,15 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-white/10">
+      <div className="p-3 border-t border-white/10 space-y-1">
+        {!collapsed && user && (
+          <div className="px-2.5 py-1.5 mb-1">
+            <p className="text-[11px] text-white font-medium truncate">{user.full_name || user.email}</p>
+            <span className="inline-flex items-center text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#00C7D9]/20 text-[#00C7D9] mt-0.5">
+              {roleLabel}
+            </span>
+          </div>
+        )}
         <button
           onClick={() => base44.auth.logout("/")}
           className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-lg text-[13px] font-medium text-slate-400 hover:text-white hover:bg-white/5 transition-colors"

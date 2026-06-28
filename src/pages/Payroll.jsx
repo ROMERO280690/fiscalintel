@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Users, Loader2, Bot, CheckCircle } from "lucide-react";
@@ -12,6 +14,7 @@ import EmptyState from "@/components/shared/EmptyState";
 const tabs = ["Empleados", "Liquidaciones", "F931"];
 
 export default function Payroll() {
+  const { canViewModule, can } = usePermissions();
   const [activeTab, setActiveTab] = useState("Empleados");
   const [employees, setEmployees] = useState([]);
   const [payslips, setPayslips] = useState([]);
@@ -99,6 +102,8 @@ Respondé en JSON con todos los montos.`,
     } catch (e) { console.error(e); }
     finally { setGenerating(null); }
   };
+
+  if (!canViewModule("payroll")) return <PermissionGuard module="payroll" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">

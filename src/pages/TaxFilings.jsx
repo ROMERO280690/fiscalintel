@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Search, Receipt, Bot, Loader2 } from "lucide-react";
@@ -20,6 +22,7 @@ const filingTypeLabels = {
 };
 
 export default function TaxFilings() {
+  const { canViewModule, can } = usePermissions();
   const [filings, setFilings] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -103,6 +106,8 @@ export default function TaxFilings() {
       setGenerating(null);
     }
   };
+
+  if (!canViewModule("tax_filings")) return <PermissionGuard module="tax_filings" />;
 
   if (loading) {
     return (

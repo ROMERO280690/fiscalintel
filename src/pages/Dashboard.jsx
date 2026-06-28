@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { usePermissions } from "@/hooks/usePermissions";
+import PermissionGuard from "@/components/shared/PermissionGuard";
 import { base44 } from "@/api/base44Client";
 import {
   Bot, CheckCircle, Clock, AlertTriangle, Zap, FileText,
@@ -9,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import StatusBadge from "@/components/shared/StatusBadge";
 
 export default function Dashboard() {
+  const { canViewModule } = usePermissions();
   const [clients, setClients] = useState([]);
   const [documents, setDocuments] = useState([]);
   const [filings, setFilings] = useState([]);
@@ -146,6 +149,8 @@ Calculá débito fiscal, crédito fiscal, impuesto a pagar. Identificá riesgos.
       setRunningAI(false);
     }
   };
+
+  if (!canViewModule("dashboard")) return <PermissionGuard module="dashboard" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">

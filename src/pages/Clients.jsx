@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
-import { Plus, Search, Users, X } from "lucide-react";
+import { Plus, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
@@ -23,6 +25,7 @@ const clientTypeLabels = {
 };
 
 export default function Clients() {
+  const { canViewModule, can } = usePermissions();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -73,6 +76,8 @@ export default function Clients() {
     loadClients();
   };
 
+  if (!canViewModule("clients")) return <PermissionGuard module="clients" />;
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -84,9 +89,11 @@ export default function Clients() {
   return (
     <div>
       <PageHeader title="Clientes" subtitle={`${clients.length} clientes registrados`}>
-        <Button onClick={() => { setEditingClient(null); setShowForm(true); }} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
-          <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Cliente
-        </Button>
+        {can("clients", "create") && (
+          <Button onClick={() => { setEditingClient(null); setShowForm(true); }} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
+            <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Cliente
+          </Button>
+        )}
       </PageHeader>
 
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
@@ -117,9 +124,11 @@ export default function Clients() {
           title="Sin clientes"
           description="Agregá tu primer cliente para comenzar a gestionar su situación fiscal."
         >
-          <Button onClick={() => setShowForm(true)} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
-            <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Cliente
-          </Button>
+          {can("clients", "create") && (
+            <Button onClick={() => setShowForm(true)} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
+              <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Cliente
+            </Button>
+          )}
         </EmptyState>
       ) : (
         <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
@@ -172,7 +181,7 @@ export default function Clients() {
         </div>
       )}
 
-      {showForm && (
+      {showForm && can("clients", "create") && (
         <ClientForm
           client={editingClient}
           onSave={handleSave}
@@ -186,6 +195,8 @@ export default function Clients() {
           onClose={() => setSelectedClient(null)}
           onEdit={(c) => { setSelectedClient(null); setEditingClient(c); setShowForm(true); }}
           onDelete={handleDelete}
+          canEdit={can("clients", "edit")}
+          canDelete={can("clients", "delete")}
         />
       )}
     </div>

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import {
   CheckCircle, XCircle, Eye, FileText, Receipt, Users,
@@ -18,6 +20,7 @@ const TYPE_CONFIG = {
 };
 
 export default function Review() {
+  const { canViewModule, can } = usePermissions();
   const [documents, setDocuments] = useState([]);
   const [filings, setFilings] = useState([]);
   const [payslips, setPayslips] = useState([]);
@@ -168,6 +171,8 @@ export default function Review() {
       await approve(item);
     }
   };
+
+  if (!canViewModule("review")) return <PermissionGuard module="review" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">

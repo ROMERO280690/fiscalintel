@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, Search, Upload, FileText, Bot, CheckCircle, XCircle } from "lucide-react";
@@ -18,6 +20,7 @@ const docTypeLabels = {
 };
 
 export default function Documents() {
+  const { canViewModule } = usePermissions();
   const [documents, setDocuments] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -61,6 +64,8 @@ export default function Documents() {
     load();
     setSelectedDoc(null);
   };
+
+  if (!canViewModule("documents")) return <PermissionGuard module="documents" />;
 
   if (loading) {
     return (

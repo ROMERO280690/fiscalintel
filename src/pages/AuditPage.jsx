@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { Shield, Search, User, Clock, ChevronDown, ChevronUp, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -49,6 +51,7 @@ function DataDiff({ meta }) {
 }
 
 export default function AuditPage() {
+  const { canViewModule } = usePermissions();
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -110,6 +113,8 @@ export default function AuditPage() {
     a.href = url; a.download = `auditoria_${new Date().toISOString().split("T")[0]}.csv`;
     a.click(); URL.revokeObjectURL(url);
   };
+
+  if (!canViewModule("audit")) return <PermissionGuard module="audit" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">

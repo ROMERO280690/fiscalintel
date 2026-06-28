@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { logAction } from "@/lib/audit";
 import { Plus, BookOpen, Bot, Loader2 } from "lucide-react";
@@ -18,6 +20,7 @@ const entryTypeLabels = {
 };
 
 export default function Accounting() {
+  const { canViewModule, can } = usePermissions();
   const [activeTab, setActiveTab] = useState("Diario");
   const [entries, setEntries] = useState([]);
   const [clients, setClients] = useState([]);
@@ -100,6 +103,8 @@ Respondé con un array de asientos.`,
     mayorData[e.account_debit].debits += e.amount || 0;
     mayorData[e.account_credit].credits += e.amount || 0;
   });
+
+  if (!canViewModule("accounting")) return <PermissionGuard module="accounting" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">

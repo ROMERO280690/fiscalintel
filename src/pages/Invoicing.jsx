@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import PermissionGuard from "@/components/shared/PermissionGuard";
+import { usePermissions } from "@/hooks/usePermissions";
 import { base44 } from "@/api/base44Client";
 import { Plus, Search, FileText, Bot, Loader2, Download, X, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -155,6 +157,7 @@ function InvoiceForm({ clients, invoice, onSave, onClose }) {
 }
 
 export default function Invoicing() {
+  const { canViewModule } = usePermissions();
   const [invoices, setInvoices] = useState([]);
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -190,6 +193,8 @@ export default function Invoicing() {
 
   const totalIssued = invoices.filter(i => i.status === "issued").reduce((s, i) => s + (i.total_amount || 0), 0);
   const totalPending = invoices.filter(i => i.status === "draft" || i.status === "cae_pending").length;
+
+  if (!canViewModule("invoicing")) return <PermissionGuard module="invoicing" />;
 
   if (loading) return (
     <div className="flex items-center justify-center h-64">
