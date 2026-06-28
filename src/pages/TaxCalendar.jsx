@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
 import EmptyState from "@/components/shared/EmptyState";
+import DeadlineAlertBanner from "@/components/tax/DeadlineAlertBanner";
 
 const obligationLabels = {
   iva: "IVA", iibb: "Ingresos Brutos", monotributo: "Monotributo",
@@ -136,6 +137,8 @@ Respondé con un array de obligaciones genéricas para el mes.`,
           </Button>
         </div>
       </PageHeader>
+
+      <DeadlineAlertBanner />
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
