@@ -46,7 +46,7 @@ export const MODULE_ROUTES = {
   account_plan:  "/account-plan",
   audit:         "/audit",
   portal:        "/portal",
-  financial_reports: "/financial-reports",
+  arca_settings: "/settings/arca",
 };
 
 // ─── Permisos por rol ────────────────────────────────────────────────────────

@@ -94,7 +94,6 @@ const AuthenticatedApp = () => {
           <Route path="/iibb-convenio" element={<IIBBConvenio />} />
           <Route path="/financial-reports" element={<FinancialReports />} />
           <Route path="/bank-reconciliation" element={<BankReconciliation />} />
-          <Route path="/bank-reconciliation" element={<BankReconciliation />} />
           <Route path="/agents" element={<Agents />} />
           <Route path="/normativa" element={<NormativaMotor />} />
           <Route path="/account-plan" element={<AccountPlanPage />} />
