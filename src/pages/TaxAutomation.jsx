@@ -207,6 +207,80 @@ export default function TaxAutomation() {
     }
   };
 
+  const submitAll = async () => {
+    if (!selectedClient) {
+      toast({
+        title: "Seleccioná un cliente",
+        description: "Elegí un cliente para presentar las DDJJ",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const toSubmit = [];
+    if (ivaData) toSubmit.push('IVA');
+    if (iibbData) toSubmit.push('IIBB');
+    if (payrollData) toSubmit.push('Sueldos');
+
+    if (toSubmit.length === 0) {
+      toast({
+        title: "No hay nada para presentar",
+        description: "Calculá al menos un impuesto primero",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      
+      // Presentar IVA
+      if (ivaData) {
+        await base44.functions.invoke('automaticIVA', {
+          action: 'submit_ddjj',
+          client_id: selectedClient.id,
+          period
+        });
+      }
+      
+      // Presentar IIBB
+      if (iibbData) {
+        await base44.functions.invoke('automaticIIBB', {
+          action: 'submit_ddjj',
+          client_id: selectedClient.id,
+          period
+        });
+      }
+      
+      // Presentar Sueldos
+      if (payrollData) {
+        await base44.functions.invoke('automaticPayroll', {
+          action: 'submit_f931',
+          client_id: selectedClient.id,
+          period
+        });
+      }
+
+      toast({
+        title: "Presentación exitosa",
+        description: `${toSubmit.length} DDJJ presentadas: ${toSubmit.join(', ')}`,
+        variant: "default"
+      });
+
+      // Reset data
+      setIvaData(null);
+      setIibbData(null);
+      setPayrollData(null);
+    } catch (error) {
+      toast({
+        title: "Error presentando DDJJ",
+        description: error.response?.data?.error || error.message,
+        variant: "destructive"
+      });
+    }
+    setLoading(false);
+  };
+
   const getDaysUntilDue = (dueDate) => {
     const today = new Date();
     const due = new Date(dueDate);
@@ -228,8 +302,16 @@ export default function TaxAutomation() {
         title="Automatización Fiscal" 
         subtitle="Contador automático - Presentaciones AFIP"
       >
-        <Button className="bg-[#00C7D9] hover:bg-[#00A8BD]">
-          <Send className="w-4 h-4 mr-2" />
+        <Button 
+          onClick={submitAll}
+          disabled={!selectedClient || loading}
+          className="bg-[#00C7D9] hover:bg-[#00A8BD]"
+        >
+          {loading ? (
+            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          ) : (
+            <Send className="w-4 h-4 mr-2" />
+          )}
           Presentar Todo
         </Button>
       </PageHeader>
