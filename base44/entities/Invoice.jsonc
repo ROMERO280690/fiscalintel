@@ -1,0 +1,111 @@
+{
+  "name": "Invoice",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "invoice_type": {
+      "type": "string",
+      "enum": [
+        "factura_a",
+        "factura_b",
+        "factura_c",
+        "factura_m",
+        "factura_e",
+        "nota_credito_a",
+        "nota_credito_b",
+        "nota_debito_a",
+        "nota_debito_b"
+      ],
+      "description": "Tipo de comprobante"
+    },
+    "point_of_sale": {
+      "type": "string",
+      "description": "Punto de venta (4 d\u00edgitos)"
+    },
+    "invoice_number": {
+      "type": "string",
+      "description": "N\u00famero de comprobante (8 d\u00edgitos)"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo fiscal MM/YYYY"
+    },
+    "receiver_cuit": {
+      "type": "string"
+    },
+    "receiver_name": {
+      "type": "string"
+    },
+    "receiver_address": {
+      "type": "string"
+    },
+    "concept": {
+      "type": "string",
+      "enum": [
+        "productos",
+        "servicios",
+        "productos_y_servicios"
+      ],
+      "default": "servicios"
+    },
+    "net_amount": {
+      "type": "number"
+    },
+    "iva_rate": {
+      "type": "number",
+      "default": 21
+    },
+    "iva_amount": {
+      "type": "number"
+    },
+    "other_taxes": {
+      "type": "number",
+      "default": 0
+    },
+    "total_amount": {
+      "type": "number"
+    },
+    "cae_number": {
+      "type": "string"
+    },
+    "cae_expiry": {
+      "type": "string",
+      "format": "date"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "cae_pending",
+        "issued",
+        "cancelled",
+        "credit_noted"
+      ],
+      "default": "draft"
+    },
+    "description": {
+      "type": "string"
+    },
+    "items": {
+      "type": "string",
+      "description": "Items de la factura (JSON)"
+    },
+    "pdf_url": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "invoice_type",
+    "date"
+  ]
+}

@@ -28,6 +28,12 @@ import Payroll from '@/pages/Payroll';
 import Accounting from '@/pages/Accounting';
 import TaxCalendar from '@/pages/TaxCalendar';
 import Review from '@/pages/Review';
+import GemeloFiscal from '@/pages/GemeloFiscal';
+import Invoicing from '@/pages/Invoicing';
+import Treasury from '@/pages/Treasury';
+import Corporate from '@/pages/Corporate';
+import IIBBConvenio from '@/pages/IIBBConvenio';
+import Agents from '@/pages/Agents';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -70,6 +76,12 @@ const AuthenticatedApp = () => {
           <Route path="/accounting" element={<Accounting />} />
           <Route path="/tax-calendar" element={<TaxCalendar />} />
           <Route path="/review" element={<Review />} />
+          <Route path="/gemelo-fiscal" element={<GemeloFiscal />} />
+          <Route path="/invoicing" element={<Invoicing />} />
+          <Route path="/treasury" element={<Treasury />} />
+          <Route path="/corporate" element={<Corporate />} />
+          <Route path="/iibb-convenio" element={<IIBBConvenio />} />
+          <Route path="/agents" element={<Agents />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

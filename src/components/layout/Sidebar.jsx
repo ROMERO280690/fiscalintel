@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, Users, FileText, FolderOpen, Receipt,
-  Building2, Calculator, ClipboardList, Shield, AlertTriangle,
+  Building2, Calculator, ClipboardList, Shield,
   CheckSquare, BarChart3, ChevronLeft, ChevronRight, LogOut,
-  Bot, Menu, X, Inbox
+  Bot, Menu, X, Inbox, DollarSign, FileCheck, Landmark, TrendingUp, Sparkles
 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 
@@ -14,21 +14,24 @@ const navSections = [
     items: [
       { icon: LayoutDashboard, label: "Dashboard", path: "/" },
       { icon: Inbox, label: "Bandeja de Revisión", path: "/review" },
+      { icon: Shield, label: "Gemelo Fiscal", path: "/gemelo-fiscal" },
       { icon: Users, label: "Clientes", path: "/clients" },
       { icon: CheckSquare, label: "Tareas", path: "/tasks" },
     ]
   },
   {
-    label: "Documentos",
+    label: "Documentos & Facturación",
     items: [
       { icon: FolderOpen, label: "Expediente Digital", path: "/documents" },
+      { icon: FileCheck, label: "Facturación Electrónica", path: "/invoicing" },
     ]
   },
   {
     label: "Impuestos",
     items: [
-      { icon: Receipt, label: "DDJJ / IVA", path: "/tax-filings" },
-      { icon: Calculator, label: "Vencimientos", path: "/tax-calendar" },
+      { icon: Receipt, label: "DDJJ / IVA / Ganancias", path: "/tax-filings" },
+      { icon: Calculator, label: "IIBB & Conv. Multilateral", path: "/iibb-convenio" },
+      { icon: BarChart3, label: "Vencimientos", path: "/tax-calendar" },
     ]
   },
   {
@@ -38,16 +41,23 @@ const navSections = [
     ]
   },
   {
-    label: "Contabilidad",
+    label: "Contabilidad & Tesorería",
     items: [
       { icon: ClipboardList, label: "Diario & Mayor", path: "/accounting" },
+      { icon: TrendingUp, label: "Tesorería", path: "/treasury" },
+    ]
+  },
+  {
+    label: "Societario",
+    items: [
+      { icon: Landmark, label: "Actas & Libros", path: "/corporate" },
     ]
   },
   {
     label: "IA",
     items: [
+      { icon: Sparkles, label: "Agentes Especializados", path: "/agents" },
       { icon: Bot, label: "Asistente IA", path: "/ai-assistant" },
-      { icon: Shield, label: "Auditoría Fiscal", path: "/tax-filings" },
     ]
   }
 ];

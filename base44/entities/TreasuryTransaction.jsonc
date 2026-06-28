@@ -1,0 +1,72 @@
+{
+  "name": "TreasuryTransaction",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "ingreso",
+        "egreso",
+        "transferencia"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "cobro_cliente",
+        "pago_proveedor",
+        "impuesto",
+        "sueldo",
+        "alquiler",
+        "servicio",
+        "banco",
+        "otro"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "amount": {
+      "type": "number"
+    },
+    "account": {
+      "type": "string",
+      "enum": [
+        "caja",
+        "banco_santander",
+        "banco_galicia",
+        "banco_bbva",
+        "banco_nacion",
+        "banco_otro",
+        "cuenta_corriente",
+        "caja_ahorro"
+      ]
+    },
+    "reference": {
+      "type": "string"
+    },
+    "reconciled": {
+      "type": "boolean",
+      "default": false
+    },
+    "period": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "date",
+    "type",
+    "amount"
+  ]
+}

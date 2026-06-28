@@ -1,0 +1,64 @@
+{
+  "name": "IIBBCoefficient",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo MM/YYYY"
+    },
+    "regime": {
+      "type": "string",
+      "enum": [
+        "local",
+        "convenio_multilateral_cm03",
+        "convenio_multilateral_cm05"
+      ],
+      "default": "local"
+    },
+    "province": {
+      "type": "string"
+    },
+    "income_coefficient": {
+      "type": "number",
+      "description": "Coeficiente ingresos"
+    },
+    "expense_coefficient": {
+      "type": "number",
+      "description": "Coeficiente gastos"
+    },
+    "unified_coefficient": {
+      "type": "number",
+      "description": "Coeficiente unificado"
+    },
+    "taxable_base": {
+      "type": "number"
+    },
+    "aliquot": {
+      "type": "number",
+      "description": "Al\u00edcuota %"
+    },
+    "tax_amount": {
+      "type": "number"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "calculated",
+        "submitted"
+      ],
+      "default": "draft"
+    }
+  },
+  "required": [
+    "client_id",
+    "period",
+    "province"
+  ]
+}

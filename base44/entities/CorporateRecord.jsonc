@@ -1,0 +1,72 @@
+{
+  "name": "CorporateRecord",
+  "type": "object",
+  "properties": {
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "record_type": {
+      "type": "string",
+      "enum": [
+        "acta_directorio",
+        "acta_asamblea",
+        "acta_socios",
+        "poder",
+        "estatuto",
+        "constitucion",
+        "modificacion",
+        "disolucion",
+        "libro_diario",
+        "libro_inventario",
+        "otro"
+      ]
+    },
+    "title": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "number": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "participants": {
+      "type": "string",
+      "description": "Participantes (JSON array)"
+    },
+    "resolutions": {
+      "type": "string",
+      "description": "Resoluciones adoptadas"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "signed",
+        "filed",
+        "rejected"
+      ],
+      "default": "draft"
+    },
+    "file_url": {
+      "type": "string"
+    },
+    "ai_draft": {
+      "type": "string",
+      "description": "Borrador generado por IA"
+    }
+  },
+  "required": [
+    "client_id",
+    "record_type",
+    "title",
+    "date"
+  ]
+}
