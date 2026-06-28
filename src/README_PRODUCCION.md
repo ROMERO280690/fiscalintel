@@ -32,15 +32,18 @@ La plataforma está **100% funcional** y lista para uso profesional.
 - Variaciones interperiodales
 - Aprobación y archivo
 
-### 5. **Facturación Electrónica (ARCA)** ✅ CUMPLE RG ARCA
+### 5. **Facturación Electrónica (ARCA)** ✅ CUMPLE RG ARCA COMPLETO
 - Emisión de Facturas A/B/C/M/E (RG AFIP 4868/2020)
 - Notas de Crédito y Débito
-- Cálculo automático de IVA (21%, 10.5%, 0%)
+- Cálculo automático de IVA (21%, 10.5%, 0%, 27%)
 - **CAE Automático:** Generación mediante WSFE v1.35
 - **Modo Offline:** CAE temporal para validación manual
 - **Modo Online:** Conexión directa con ARCA (certificados requeridos)
-- **QR Code:** Incluído en PDF (obligatorio desde 2026)
-- **Imprimir/Reimprimir:** Botón disponible en facturas emitidas
+- **QR Code RG 5616/2024:** ✅ Generado automáticamente con URL AFIP verificable
+- **Numeración correlativa:** ✅ Auto-incremental por tipo y punto de venta (RG 4868/2020)
+- **Condición IVA:** ✅ Emisor y receptor con condición fiscal (RI, Monotributista, Exento)
+- **Domicilio fiscal:** ✅ Completo (calle, localidad, provincia)
+- **Imprimir/Reimprimir:** ✅ Botón disponible en facturas emitidas
 - **Conservación digital:** 10 años (RG AFIP 4214/2018)
 
 ### 6. **Facturación Electrónica (ARCA)**

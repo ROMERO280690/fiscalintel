@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import PageHeader from "@/components/shared/PageHeader";
 import StatusBadge from "@/components/shared/StatusBadge";
 import EmptyState from "@/components/shared/EmptyState";
+import QRCodeAFIP from "@/components/arca/QRCodeAFIP";
 
 const invoiceTypeLabels = {
   factura_a: "Factura A", factura_b: "Factura B", factura_c: "Factura C",
@@ -31,7 +32,7 @@ const COMPROBANTE_RULES = {
   nota_debito_b: "ND B: cargo adicional sobre Factura B.",
 };
 
-function InvoiceForm({ clients, invoice, onSave, onClose }) {
+function InvoiceForm({ clients, invoice, onSave, onClose, company, getNextInvoiceNumber }) {
   const [form, setForm] = useState(invoice || {
     client_id: "", invoice_type: "factura_b", date: new Date().toISOString().split("T")[0],
     concept: "servicios", net_amount: 0, iva_rate: 21, other_taxes: 0, description: "",
@@ -72,7 +73,17 @@ function InvoiceForm({ clients, invoice, onSave, onClose }) {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="text-[11px] text-slate-500 font-semibold uppercase mb-1 block">Cliente *</label>
-              <select value={form.client_id} onChange={e => autoFillClient(e.target.value)}
+              <select 
+                value={form.client_id} 
+                onChange={async e => {
+                  const clientId = e.target.value;
+                  autoFillClient(clientId);
+                  // Auto-asignar próximo número correlativo al seleccionar cliente
+                  if (!invoice?.id && form.point_of_sale && form.invoice_type) {
+                    const nextNum = await getNextInvoiceNumber(form.point_of_sale, form.invoice_type);
+                    set("invoice_number", nextNum);
+                  }
+                }}
                 className="w-full h-9 px-3 rounded-lg border border-slate-200 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00C7D9]/20">
                 <option value="">Seleccioná cliente</option>
                 {clients.map(c => <option key={c.id} value={c.id}>{c.business_name}</option>)}
@@ -80,7 +91,17 @@ function InvoiceForm({ clients, invoice, onSave, onClose }) {
             </div>
             <div>
               <label className="text-[11px] text-slate-500 font-semibold uppercase mb-1 block">Tipo</label>
-              <select value={form.invoice_type} onChange={e => set("invoice_type", e.target.value)}
+              <select 
+                value={form.invoice_type} 
+                onChange={async e => {
+                  const newType = e.target.value;
+                  set("invoice_type", newType);
+                  // Auto-asignar próximo número correlativo por tipo
+                  if (!invoice?.id && form.point_of_sale) {
+                    const nextNum = await getNextInvoiceNumber(form.point_of_sale, newType);
+                    set("invoice_number", nextNum);
+                  }
+                }}
                 className="w-full h-9 px-3 rounded-lg border border-slate-200 text-[13px] focus:outline-none focus:ring-2 focus:ring-[#00C7D9]/20">
                 {Object.entries(invoiceTypeLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </select>
@@ -96,7 +117,21 @@ function InvoiceForm({ clients, invoice, onSave, onClose }) {
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="text-[11px] text-slate-500 font-semibold uppercase mb-1 block">Punto de Venta</label>
-              <Input value={form.point_of_sale} onChange={e => set("point_of_sale", e.target.value)} className="h-9 text-[13px]" placeholder="0001" />
+              <Input 
+                value={form.point_of_sale} 
+                onChange={async e => {
+                  const newPoS = e.target.value;
+                  set("point_of_sale", newPoS);
+                  // Auto-asignar próximo número correlativo
+                  if (!invoice?.id && newPoS.length === 4) {
+                    const nextNum = await getNextInvoiceNumber(newPoS, form.invoice_type);
+                    set("invoice_number", nextNum);
+                  }
+                }} 
+                className="h-9 text-[13px]" 
+                placeholder="0001" 
+                maxLength={4}
+              />
             </div>
             <div>
               <label className="text-[11px] text-slate-500 font-semibold uppercase mb-1 block">Fecha</label>
@@ -179,6 +214,7 @@ export default function Invoicing() {
   const { canViewModule } = usePermissions();
   const [invoices, setInvoices] = useState([]);
   const [clients, setClients] = useState([]);
+  const [company, setCompany] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -187,6 +223,17 @@ export default function Invoicing() {
   const [generandoCAE, setGenerandoCAE] = useState(null);
   const [arcoStatus, setArcoStatus] = useState(null);
   const [viewingInvoice, setViewingInvoice] = useState(null);
+
+  // Cargar empresa/emisor por defecto
+  useEffect(() => {
+    base44.entities.Company.list({ status: "active" }, "-created_date", 1)
+      .then(companies => {
+        if (companies && companies.length > 0) {
+          setCompany(companies[0]);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const checkARCAStatus = async () => {
     try {
@@ -204,6 +251,21 @@ export default function Invoicing() {
     ]);
     setInvoices(inv); setClients(cls); setLoading(false);
     checkARCAStatus();
+  };
+
+  // Obtener próximo número de comprobante correlativo (RG ARCA 4868/2020)
+  const getNextInvoiceNumber = async (pointOfSale, invoiceType) => {
+    const ptoVta = pointOfSale || "0001";
+    const sameTypeInvoices = invoices.filter(inv => 
+      inv.point_of_sale === ptoVta && 
+      inv.invoice_type === invoiceType &&
+      inv.invoice_number
+    );
+    
+    if (sameTypeInvoices.length === 0) return "00000001";
+    
+    const maxNumber = Math.max(...sameTypeInvoices.map(inv => parseInt(inv.invoice_number) || 0));
+    return String(maxNumber + 1).padStart(8, "0");
   };
 
   useEffect(() => { load(); }, []);
@@ -376,17 +438,41 @@ export default function Invoicing() {
           invoice={editing}
           onSave={handleSave}
           onClose={() => { setShowForm(false); setEditing(null); }}
+          getNextInvoiceNumber={getNextInvoiceNumber}
         />
       )}
 
       {viewingInvoice && (
-        <InvoiceViewer invoice={viewingInvoice} client={clients.find(c => c.id === viewingInvoice.client_id)} onClose={() => setViewingInvoice(null)} />
+        <InvoiceViewer 
+          invoice={viewingInvoice} 
+          client={clients.find(c => c.id === viewingInvoice.client_id)} 
+          company={company}
+          onClose={() => setViewingInvoice(null)} 
+        />
       )}
     </div>
   );
 }
 
-function InvoiceViewer({ invoice, client, onClose }) {
+function InvoiceViewer({ invoice, client, company, onClose }) {
+  const getConditionIVA = (type) => {
+    const conditions = {
+      'responsable_inscripto': 'Responsable Inscripto',
+      'monotributista': 'Monotributista',
+      'autonomo': 'Monotributista',
+      'sas': 'Responsable Inscripto',
+      'srl': 'Responsable Inscripto',
+      'sa': 'Responsable Inscripto',
+      'cooperativa': 'Exento',
+      'agro': 'Monotributista',
+      'pyme': 'Responsable Inscripto'
+    };
+    return conditions[type] || 'Consumidor Final';
+  };
+
+  const emitterCondition = getConditionIVA(company?.company_type);
+  const receiverCondition = getConditionIVA(client?.client_type);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto">
@@ -395,48 +481,78 @@ function InvoiceViewer({ invoice, client, onClose }) {
           <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-5 h-5" /></button>
         </div>
         <div className="p-6 space-y-4">
-          {/* Header */}
-          <div className="grid grid-cols-2 gap-4 pb-4 border-b">
-            <div>
-              <p className="text-[10px] text-slate-500 uppercase">Emisor</p>
-              <p className="text-sm font-semibold">{client?.business_name || invoice.client_name}</p>
-              <p className="text-xs text-slate-600">CUIT: {client?.cuit || invoice.receiver_cuit}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] text-slate-500 uppercase">Comprobante</p>
-              <p className="text-sm font-bold font-mono">{invoice.point_of_sale}-{invoice.invoice_number || '00000000'}</p>
-              <p className="text-xs text-slate-600">Fecha: {invoice.date}</p>
+          {/* Header - Emisor */}
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <p className="text-[10px] text-slate-500 uppercase font-semibold mb-2">EMISOR</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-sm font-bold text-[#1A1A2E]">{company?.business_name || client?.business_name || invoice.client_name}</p>
+                <p className="text-xs text-slate-600 mt-0.5">CUIT: {company?.cuit || client?.cuit || invoice.receiver_cuit}</p>
+                <p className="text-xs text-slate-600">Condición IVA: <span className="font-semibold">{emitterCondition}</span></p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-600">Domicilio: {company?.address || client?.address || 'S/D'}</p>
+                <p className="text-xs text-slate-600">Localidad: {company?.city || client?.city || 'S/D'}</p>
+                <p className="text-xs text-slate-600">Provincia: {company?.province || client?.province || 'S/D'}</p>
+              </div>
             </div>
           </div>
 
           {/* Receptor */}
-          <div>
-            <p className="text-[10px] text-slate-500 uppercase mb-1">Receptor</p>
-            <p className="text-sm font-semibold">{invoice.receiver_name || 'Consumidor Final'}</p>
-            <p className="text-xs text-slate-600">CUIT: {invoice.receiver_cuit || '00-00000000-0'}</p>
-            <p className="text-xs text-slate-600">Domicilio: {invoice.receiver_address || 'S/D'}</p>
+          <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <p className="text-[10px] text-slate-500 uppercase font-semibold mb-2">RECEPTOR</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-sm font-bold text-[#1A1A2E]">{invoice.receiver_name || 'Consumidor Final'}</p>
+                <p className="text-xs text-slate-600 mt-0.5">CUIT: {invoice.receiver_cuit || '00-00000000-0'}</p>
+                <p className="text-xs text-slate-600">Condición IVA: <span className="font-semibold">{receiverCondition}</span></p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-slate-600">Domicilio: {invoice.receiver_address || client?.address || 'S/D'}</p>
+                <p className="text-xs text-slate-600">Localidad: {client?.city || 'S/D'}</p>
+                <p className="text-xs text-slate-600">Provincia: {client?.province || 'S/D'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Comprobante Info */}
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="bg-[#E0F7FA] rounded-lg p-3">
+              <p className="text-[9px] text-slate-500 uppercase">Comprobante</p>
+              <p className="text-sm font-bold font-mono text-[#1A1A2E]">
+                {invoice.point_of_sale}-{String(invoice.invoice_number || '0').padStart(8, '0')}
+              </p>
+            </div>
+            <div className="bg-[#E0F7FA] rounded-lg p-3">
+              <p className="text-[9px] text-slate-500 uppercase">Fecha</p>
+              <p className="text-sm font-bold text-[#1A1A2E]">{invoice.date}</p>
+            </div>
+            <div className="bg-[#E0F7FA] rounded-lg p-3">
+              <p className="text-[9px] text-slate-500 uppercase">Concepto</p>
+              <p className="text-sm font-bold text-[#1A1A2E] capitalize">{invoice.concept}</p>
+            </div>
           </div>
 
           {/* Detalle */}
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-sm text-slate-700 mb-2">{invoice.description || 'Servicios profesionales'}</p>
-            <div className="space-y-1 text-right">
-              <div className="flex justify-between text-xs">
-                <span className="text-slate-600">Neto</span>
+          <div className="bg-white border border-slate-200 rounded-lg p-4">
+            <p className="text-sm text-slate-700 mb-3 font-medium">{invoice.description || 'Servicios profesionales'}</p>
+            <div className="space-y-1.5 text-right">
+              <div className="flex justify-between text-xs py-1 border-b border-slate-100">
+                <span className="text-slate-600">Neto Gravado</span>
                 <span className="font-mono">${(invoice.net_amount || 0).toLocaleString('es-AR')}</span>
               </div>
-              <div className="flex justify-between text-xs">
+              <div className="flex justify-between text-xs py-1 border-b border-slate-100">
                 <span className="text-slate-600">IVA ({invoice.iva_rate}%)</span>
                 <span className="font-mono">${(invoice.iva_amount || 0).toLocaleString('es-AR')}</span>
               </div>
               {invoice.other_taxes > 0 && (
-                <div className="flex justify-between text-xs">
+                <div className="flex justify-between text-xs py-1 border-b border-slate-100">
                   <span className="text-slate-600">Otras percepciones</span>
                   <span className="font-mono">${invoice.other_taxes.toLocaleString('es-AR')}</span>
                 </div>
               )}
-              <div className="flex justify-between text-sm font-bold pt-2 border-t">
-                <span>TOTAL</span>
+              <div className="flex justify-between text-base font-bold pt-2">
+                <span className="text-[#1A1A2E]">TOTAL</span>
                 <span className="font-mono text-[#1A1A2E]">${(invoice.total_amount || 0).toLocaleString('es-AR')}</span>
               </div>
             </div>
@@ -445,17 +561,24 @@ function InvoiceViewer({ invoice, client, onClose }) {
           {/* CAE */}
           {invoice.cae_number && (
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-              <p className="text-[10px] text-emerald-700 font-semibold uppercase mb-1">CAE Autorizado</p>
-              <p className="text-sm font-mono text-emerald-800">{invoice.cae_number}</p>
+              <p className="text-[9px] text-emerald-700 font-bold uppercase mb-1">Código de Autorización Electrónico (CAE)</p>
+              <p className="text-sm font-mono text-emerald-800 font-bold">{invoice.cae_number}</p>
               <p className="text-[10px] text-emerald-600">Vencimiento: {invoice.cae_expiry}</p>
             </div>
           )}
 
-          {/* QR Code placeholder */}
-          <div className="flex items-center justify-center py-4">
-            <div className="w-32 h-32 bg-slate-100 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-center">
-              <p className="text-[10px] text-slate-400 text-center">QR<br/>AFIP</p>
+          {/* QR Code AFIP - RG 5616/2024 */}
+          {invoice.cae_number && (
+            <div className="border-2 border-slate-200 rounded-lg p-4">
+              <QRCodeAFIP invoice={invoice} client={client} />
             </div>
+          )}
+
+          {/* Leyenda ARCA */}
+          <div className="text-center pt-2">
+            <p className="text-[9px] text-slate-400">
+              Comprobante electrónico autorizado por ARCA - RG 4868/2020 y RG 5616/2024
+            </p>
           </div>
         </div>
         <div className="flex justify-end gap-2 p-5 border-t border-slate-100">
