@@ -37,6 +37,7 @@ const PATH_MODULE = {
   "/account-plan":  "account_plan",
   "/audit":         "audit",
   "/portal":        "portal",
+  "/settings/arca": "arca_settings",
 };
 
 const navSections = [
@@ -101,6 +102,7 @@ const navSections = [
       { icon: BookOpen,  label: "Plan de Cuentas",       path: "/account-plan" },
       { icon: Activity,  label: "Auditoría & Logs",      path: "/audit" },
       { icon: Shield,    label: "Portal del Cliente",    path: "/portal" },
+      { icon: Shield,    label: "Config. ARCA",          path: "/settings/arca" },
     ]
   }
 ];

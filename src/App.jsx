@@ -43,6 +43,8 @@ import AuditPage from '@/pages/AuditPage';
 import ClientPortal from '@/pages/ClientPortal';
 import Companies from '@/pages/Companies';
 import Onboarding from '@/pages/Onboarding';
+import ARCASettings from '@/pages/ARCASettings';
+import HelpCenter from '@/pages/HelpCenter';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -100,6 +102,8 @@ const AuthenticatedApp = () => {
           <Route path="/portal" element={<ClientPortal />} />
           <Route path="/companies" element={<Companies />} />
           <Route path="/onboarding" element={<Onboarding />} />
+          <Route path="/settings/arca" element={<ARCASettings />} />
+          <Route path="/help" element={<HelpCenter />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

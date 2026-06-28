@@ -82,7 +82,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: ALL_ACTIONS, dataScope: "all" },
     audit:         { actions: ALL_ACTIONS, dataScope: "all" },
     portal:        { actions: ALL_ACTIONS, dataScope: "all" },
-    financial_reports: { actions: ALL_ACTIONS, dataScope: "all" },
+    arca_settings: { actions: ALL_ACTIONS, dataScope: "all" },
   },
 
   // ── Empresa ───────────────────────────────────────────────────────────────
@@ -137,7 +137,7 @@ const ROLE_PERMISSIONS = {
     account_plan:  { actions: ALL_ACTIONS, dataScope: "all" },
     audit:         { actions: READ_ONLY,   dataScope: "all" },
     portal:        { actions: ALL_ACTIONS, dataScope: "all" },
-    financial_reports: { actions: ALL_ACTIONS, dataScope: "all" },
+    arca_settings: { actions: ALL_ACTIONS, dataScope: "all" },
   },
 
   // ── Contador ──────────────────────────────────────────────────────────────
