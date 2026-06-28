@@ -1,6 +1,7 @@
 import React from "react";
 import { normalizeRole, ROLE_LABELS } from "@/lib/permissions";
 import { useAuth } from "@/lib/AuthContext";
+import { useCompany } from "@/lib/CompanyContext";
 import DashboardSuperAdmin from "@/components/dashboard/DashboardSuperAdmin";
 import DashboardEstudio from "@/components/dashboard/DashboardEstudio";
 import DashboardContador from "@/components/dashboard/DashboardContador";
@@ -24,6 +25,7 @@ const DASHBOARD_BY_ROLE = {
 
 export default function Dashboard() {
   const { user, isLoadingAuth } = useAuth();
+  const { activeCompany } = useCompany();
 
   if (isLoadingAuth) return (
     <div className="min-h-screen bg-[#0A0B14] flex items-center justify-center">
@@ -73,7 +75,7 @@ export default function Dashboard() {
 
       {/* Dashboard del rol */}
       <div className="p-4 lg:p-6">
-        <DashboardComponent user={user} />
+        <DashboardComponent user={user} activeCompanyId={activeCompany?.id} />
       </div>
     </div>
   );

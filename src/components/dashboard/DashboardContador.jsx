@@ -4,8 +4,9 @@ import { BarChart, Bar, ResponsiveContainer, XAxis, Tooltip, CartesianGrid } fro
 import { Users, FileText, Clock, CheckSquare, AlertTriangle, Activity, Calendar } from "lucide-react";
 import KPICard from "./KPICard";
 import DarkCard from "./DarkCard";
+import TaxDeadlineCalendar from "./TaxDeadlineCalendar";
 
-export default function DashboardContador({ user }) {
+export default function DashboardContador({ user, activeCompanyId }) {
   const [clients, setClients] = useState([]);
   const [filings, setFilings] = useState([]);
   const [tasks, setTasks] = useState([]);
@@ -47,18 +48,12 @@ export default function DashboardContador({ user }) {
         <KPICard label="Tareas" value={pendingTasks || 32} delta={5} color="blue" icon={CheckSquare} sub="12 pendientes" />
       </div>
 
-      <div className="grid grid-cols-2 gap-2 mb-3">
-        <DarkCard title="Obligaciones Próximas" icon={Calendar} iconColor="text-amber-400" linkTo="/tax-calendar" linkLabel="Ver todas">
-          <div className="space-y-1.5">
-            {proximasObligaciones.map((o, i) => (
-              <div key={i} className={`flex items-center justify-between p-1.5 rounded-lg border ${o.urgente ? "bg-red-500/5 border-red-500/20" : "bg-white/3 border-white/5"}`}>
-                <p className="text-[10px] text-white/70 truncate flex-1">{o.label}</p>
-                <span className={`text-[9px] font-semibold ml-1 px-1.5 py-0.5 rounded-full flex-shrink-0 ${o.urgente ? "bg-red-500/20 text-red-400" : "bg-white/10 text-white/40"}`}>{o.fecha}</span>
-              </div>
-            ))}
-          </div>
-        </DarkCard>
+      {/* Calendario de vencimientos - ocupa todo el ancho */}
+      <div className="mb-3">
+        <TaxDeadlineCalendar activeCompanyId={activeCompanyId} />
+      </div>
 
+      <div className="grid grid-cols-2 gap-2 mb-3">
         <DarkCard title="Resumen de Actividad" icon={Activity} iconColor="text-violet-400">
           <ResponsiveContainer width="100%" height={100}>
             <BarChart data={actividadData}>
