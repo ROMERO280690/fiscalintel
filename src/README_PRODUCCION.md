@@ -14,34 +14,58 @@ La plataforma está **100% funcional** y lista para uso profesional.
 - Clasificación por categoría impositiva
 - Índice de cumplimiento y nivel de riesgo
 
+### 2. **Monotributo** (NUEVO)
+- Cálculo automático de cuotas según categoría (A-N)
+- Recategorización anual (diciembre)
+- Historial de pagos y vencimientos
+- IVA e impuestos internos discriminados
+
+### 3. **Retenciones y Percepciones** (NUEVO)
+- IIBB (régimen local y CM)
+- IVA, Ganancias, Sellos
+- Certificados de retención
+- Presentación de pagos con VEP
+
+### 4. **Balances Contables** (NUEVO)
+- Estado de Situación Patrimonial
+- Estado de Resultados
+- Variaciones interperiodales
+- Aprobación y archivo
+
+### 5. **Facturación Electrónica (ARCA)**
+- Alta, baja y modificación de clientes
+- CUIT con validación automática del tipo de contribuyente
+- Clasificación por categoría impositiva
+- Índice de cumplimiento y nivel de riesgo
+
 **Nota AFIP:** La consulta automática de datos de AFIP requiere configuración manual de certificados WSAA. Mientras tanto, el sistema infiere el tipo de contribuyente desde el CUIT y el contador completa los datos restantes consultando en [afip.gob.ar/registrando](https://www.afip.gob.ar/registrando/).
 
-### 2. **Facturación Electrónica (ARCA)**
+### 6. **Facturación Electrónica (ARCA)**
 - Emisión de Facturas A/B/C/M/E
 - Notas de Crédito y Débito
 - Cálculo automático de IVA
 - **Modo Offline:** Genera CAE temporal para validación manual en portal AFIP
 - **Modo Online:** Requiere certificados ARCA configurados en Secrets
 
-### 3. **Automatización Fiscal**
+### 7. **Automatización Fiscal**
 - **IVA (F.2072):** Cálculo automático de débito/crédito fiscal
 - **IIBB:** Cálculo por régimen local o Convenio Multilateral
 - **Sueldos (F.931):** Liquidación automática con cargas sociales
 
 **Presentación AFIP:** Las DDJJ se generan automáticamente pero la presentación final puede requerir validación manual en el portal de AFIP según la configuración de certificados.
 
-### 4. **Contabilidad**
+### 8. **Contabilidad**
 - Libro Diario automatizado
 - Libro Mayor
 - Asientos contables
 - Plan de cuentas
 
-### 5. **Tesorería**
+### 9. **Tesorería**
 - Control de ingresos y egresos
 - Conciliación bancaria
 - Flujo de caja
 
-### 6. **Documentación**
+### 10. **Documentación**
 - Carga de comprobantes
 - Clasificación automática con IA
 - Extracción de datos de facturas
@@ -150,16 +174,21 @@ Para habilitar la conexión **real** con ARCA/AFIP:
 - [x] Autenticación de usuarios
 - [x] Gestión multi-empresa
 - [x] Clientes (alta/baja/modificación)
+- [x] Monotributo (cuotas + recategorización)
+- [x] Retenciones y percepciones (IIBB, IVA, Ganancias)
+- [x] Balances contables (Situación Patrimonial, Resultados)
 - [x] Facturación electrónica
-- [x] Cálculo de IVA
-- [x] Cálculo de IIBB
-- [x] Liquidación de sueldos
-- [x] Contabilidad general
+- [x] Cálculo de IVA (F.2072)
+- [x] Cálculo de IIBB (Convenio Multilateral)
+- [x] Liquidación de sueldos (F.931)
+- [x] Contabilidad general (Libro Diario/Mayor)
 - [x] Tesorería
 - [x] Documentación
 - [x] Auditoría (logs de todas las acciones)
 - [x] Roles y permisos
 - [x] Responsive (mobile/desktop)
+- [x] Vencimientos fiscales (alertas automáticas)
+- [x] Backup automático semanal
 
 ---
 

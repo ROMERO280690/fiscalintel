@@ -1,0 +1,113 @@
+{
+  "name": "Withholding",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID empresa (aislamiento multiempresa)"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "withholding_type": {
+      "type": "string",
+      "enum": [
+        "iibb_local",
+        "iibb_cm",
+        "iva",
+        "ganancias",
+        "sellos",
+        "sscc"
+      ],
+      "description": "Tipo de retenci\u00f3n"
+    },
+    "regime": {
+      "type": "string",
+      "description": "R\u00e9gimen aplicable"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo MM/YYYY"
+    },
+    "document_type": {
+      "type": "string",
+      "description": "Tipo de comprobante"
+    },
+    "document_number": {
+      "type": "string",
+      "description": "N\u00famero de comprobante"
+    },
+    "document_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "issuer_cuit": {
+      "type": "string",
+      "description": "CUIT del emisor"
+    },
+    "issuer_name": {
+      "type": "string",
+      "description": "Nombre del emisor"
+    },
+    "taxable_base": {
+      "type": "number",
+      "description": "Base imponible"
+    },
+    "rate": {
+      "type": "number",
+      "description": "Al\u00edcuota %"
+    },
+    "amount": {
+      "type": "number",
+      "description": "Monto retenido"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "certified",
+        "paid",
+        "rectified"
+      ],
+      "default": "pending"
+    },
+    "certificate_number": {
+      "type": "string",
+      "description": "N\u00famero de certificado"
+    },
+    "certificate_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "payment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "vep_number": {
+      "type": "string",
+      "description": "N\u00famero de VEP"
+    },
+    "jurisdiction": {
+      "type": "string",
+      "enum": [
+        "nacional",
+        "caba",
+        "otra"
+      ],
+      "description": "Jurisdicci\u00f3n"
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "client_id",
+    "withholding_type",
+    "period",
+    "taxable_base",
+    "amount"
+  ]
+}

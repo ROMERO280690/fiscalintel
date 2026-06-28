@@ -47,6 +47,9 @@ import ARCASettings from '@/pages/ARCASettings';
 import HelpCenter from '@/pages/HelpCenter';
 import Team from '@/pages/Team';
 import TaxAutomation from '@/pages/TaxAutomation';
+import Monotributo from '@/pages/Monotributo';
+import Withholdings from '@/pages/Withholdings';
+import BalanceSheet from '@/pages/BalanceSheet';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -107,6 +110,9 @@ const AuthenticatedApp = () => {
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/team" element={<Team />} />
           <Route path="/tax-automation" element={<TaxAutomation />} />
+          <Route path="/monotributo" element={<Monotributo />} />
+          <Route path="/withholdings" element={<Withholdings />} />
+          <Route path="/balance-sheet" element={<BalanceSheet />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />

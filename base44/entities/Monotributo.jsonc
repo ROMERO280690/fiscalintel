@@ -1,0 +1,110 @@
+{
+  "name": "Monotributo",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID empresa (aislamiento multiempresa)"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo MM/YYYY"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N"
+      ],
+      "description": "Categor\u00eda de Monotributo"
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "venta_cosas_muebles",
+        "servicios_capital",
+        "servicios_interior",
+        "mixta"
+      ],
+      "description": "Tipo de actividad"
+    },
+    "location": {
+      "type": "string",
+      "enum": [
+        "capital_federal",
+        "interior"
+      ],
+      "description": "Ubicaci\u00f3n geogr\u00e1fica"
+    },
+    "monthly_fee": {
+      "type": "number",
+      "description": "Cuota mensual"
+    },
+    "iva_included": {
+      "type": "number",
+      "description": "IVA incluido en cuota"
+    },
+    "ip_included": {
+      "type": "number",
+      "description": "Impuestos internos incluidos"
+    },
+    "social_security": {
+      "type": "number",
+      "description": "Aportes seguridad social"
+    },
+    "total_paid": {
+      "type": "number",
+      "description": "Total pagado"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "paid",
+        "overdue",
+        "waived"
+      ],
+      "default": "pending"
+    },
+    "payment_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "vep_number": {
+      "type": "string",
+      "description": "N\u00famero de VEP"
+    },
+    "recategorization": {
+      "type": "boolean",
+      "default": false,
+      "description": "Si corresponde recategorizaci\u00f3n"
+    },
+    "annual_income": {
+      "type": "number",
+      "description": "Ingresos anuales para recategorizaci\u00f3n"
+    }
+  },
+  "required": [
+    "client_id",
+    "period",
+    "category"
+  ]
+}

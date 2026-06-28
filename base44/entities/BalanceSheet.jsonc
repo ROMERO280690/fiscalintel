@@ -1,0 +1,104 @@
+{
+  "name": "BalanceSheet",
+  "type": "object",
+  "properties": {
+    "company_id": {
+      "type": "string",
+      "description": "ID empresa (aislamiento multiempresa)"
+    },
+    "client_id": {
+      "type": "string"
+    },
+    "client_name": {
+      "type": "string"
+    },
+    "period": {
+      "type": "string",
+      "description": "Per\u00edodo MM/YYYY o AAAA (anual)"
+    },
+    "balance_type": {
+      "type": "string",
+      "enum": [
+        "situacion_patrimonial",
+        "estado_resultados",
+        "estado_cambios_patrimonio",
+        "estado_flujo_efectivo"
+      ],
+      "description": "Tipo de estado contable"
+    },
+    "account_code": {
+      "type": "string",
+      "description": "C\u00f3digo de cuenta contable"
+    },
+    "account_name": {
+      "type": "string",
+      "description": "Nombre de la cuenta"
+    },
+    "account_type": {
+      "type": "string",
+      "enum": [
+        "activo_corriente",
+        "activo_no_corriente",
+        "pasivo_corriente",
+        "pasivo_no_corriente",
+        "patrimonio_neto",
+        "ingreso",
+        "egreso"
+      ],
+      "description": "Tipo de cuenta"
+    },
+    "debit_amount": {
+      "type": "number",
+      "description": "Importe al debe"
+    },
+    "credit_amount": {
+      "type": "number",
+      "description": "Importe al haber"
+    },
+    "balance": {
+      "type": "number",
+      "description": "Saldo de la cuenta"
+    },
+    "previous_balance": {
+      "type": "number",
+      "description": "Saldo del per\u00edodo anterior"
+    },
+    "variation": {
+      "type": "number",
+      "description": "Variaci\u00f3n respecto al per\u00edodo anterior"
+    },
+    "variation_percentage": {
+      "type": "number",
+      "description": "Variaci\u00f3n porcentual"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notas a los estados contables"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "review",
+        "approved",
+        "filed"
+      ],
+      "default": "draft"
+    },
+    "approved_by": {
+      "type": "string",
+      "description": "Contador que aprob\u00f3"
+    },
+    "approval_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "client_id",
+    "period",
+    "balance_type",
+    "account_code",
+    "account_name"
+  ]
+}
