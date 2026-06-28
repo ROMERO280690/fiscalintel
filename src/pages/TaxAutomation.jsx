@@ -45,16 +45,28 @@ export default function TaxAutomation() {
   }, [selectedCompany]);
 
   const loadClients = async () => {
-    const data = await base44.entities.Client.filter({
-      company_id: selectedCompany.id,
-      status: 'active'
-    });
-    setClients(data || []);
-    
-    // Set current period
-    const now = new Date();
-    const currentPeriod = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
-    setPeriod(currentPeriod);
+    try {
+      // Primero intentar por company_id
+      let data = await base44.entities.Client.filter({
+        company_id: selectedCompany.id,
+        status: 'active'
+      });
+      
+      // Si no hay clientes, intentar sin filtro de company_id (para estudios contables)
+      if (!data || data.length === 0) {
+        data = await base44.entities.Client.filter({ status: 'active' });
+      }
+      
+      setClients(data || []);
+      
+      // Set current period
+      const now = new Date();
+      const currentPeriod = `${String(now.getMonth() + 1).padStart(2, '0')}/${now.getFullYear()}`;
+      setPeriod(currentPeriod);
+    } catch (error) {
+      console.error('Error cargando clientes:', error);
+      setClients([]);
+    }
   };
 
   const loadDeadlines = async () => {
@@ -322,18 +334,25 @@ export default function TaxAutomation() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="text-xs font-medium text-slate-600 mb-1 block">Cliente</label>
-              <select
-                value={selectedClient?.id || ''}
-                onChange={(e) => setSelectedClient(clients.find(c => c.id === e.target.value))}
-                className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00C7D9]"
-              >
-                <option value="">Seleccionar cliente...</option>
-                {clients.map(client => (
-                  <option key={client.id} value={client.id}>
-                    {client.business_name}
-                  </option>
-                ))}
-              </select>
+              {clients.length === 0 ? (
+                <div className="w-full rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  <AlertCircle className="w-4 h-4 inline mr-1" />
+                  No hay clientes activos. <a href="/clients" className="underline font-medium">Crear cliente</a>
+                </div>
+              ) : (
+                <select
+                  value={selectedClient?.id || ''}
+                  onChange={(e) => setSelectedClient(clients.find(c => c.id === e.target.value))}
+                  className="w-full rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#00C7D9]"
+                >
+                  <option value="">Seleccionar cliente...</option>
+                  {clients.map(client => (
+                    <option key={client.id} value={client.id}>
+                      {client.business_name}
+                    </option>
+                  ))}
+                </select>
+              )}
             </div>
             
             <div>
