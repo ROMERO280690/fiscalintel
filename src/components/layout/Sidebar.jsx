@@ -26,6 +26,7 @@ const PATH_MODULE = {
   "/iibb-convenio": "iibb",
   "/tax-calendar":  "tax_calendar",
   "/payroll":       "payroll",
+  "/tax-automation": "automation",
   "/accounting":    "accounting",
   "/treasury":      "treasury",
   "/financial-reports": "financial_reports",
@@ -88,10 +89,11 @@ const navSections = [
     ]
   },
   {
-    label: "IA & Normativa",
+    label: "IA & Automatización",
     items: [
       { icon: Sparkles, label: "Agentes Especializados", path: "/agents" },
       { icon: Bot,      label: "Asistente IA",           path: "/ai-assistant" },
+      { icon: Bot,      label: "Automatización Fiscal",  path: "/tax-automation" },
       { icon: Globe,    label: "Motor Normativo",        path: "/normativa" },
     ]
   },

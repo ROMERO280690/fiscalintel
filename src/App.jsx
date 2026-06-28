@@ -46,6 +46,7 @@ import Onboarding from '@/pages/Onboarding';
 import ARCASettings from '@/pages/ARCASettings';
 import HelpCenter from '@/pages/HelpCenter';
 import Team from '@/pages/Team';
+import TaxAutomation from '@/pages/TaxAutomation';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -105,6 +106,7 @@ const AuthenticatedApp = () => {
           <Route path="/settings/arca" element={<ARCASettings />} />
           <Route path="/help" element={<HelpCenter />} />
           <Route path="/team" element={<Team />} />
+          <Route path="/tax-automation" element={<TaxAutomation />} />
         </Route>
       </Route>
       <Route path="*" element={<PageNotFound />} />
