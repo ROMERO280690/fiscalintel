@@ -37,13 +37,14 @@ export default function Dashboard() {
     </div>
   );
 
-  // Redirect to onboarding if no company is set up
-  if (!activeCompany && user) {
+  const role = normalizeRole(user?.role);
+
+  // Redirect to onboarding ONLY for non-super-admin users without a company
+  // SuperAdmin has access to everything without needing a company
+  if (!activeCompany && user && role !== "super_admin") {
     window.location.href = "/onboarding";
     return null;
   }
-
-  const role = normalizeRole(user?.role);
   const roleLabel = ROLE_LABELS[role] || "Usuario";
   const DashboardComponent = DASHBOARD_BY_ROLE[role] || DashboardCliente;
 

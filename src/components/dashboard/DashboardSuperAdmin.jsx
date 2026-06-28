@@ -4,9 +4,11 @@ import {
   AreaChart, Area, LineChart, Line,
   PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid
 } from "recharts";
-import { Building2, Users, Bot, TrendingUp, Activity, AlertTriangle } from "lucide-react";
+import { Building2, Users, Bot, TrendingUp, Activity, AlertTriangle, Pencil, Trash2, Ban, CheckCircle, Eye } from "lucide-react";
 import KPICard from "./KPICard";
 import DarkCard from "./DarkCard";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export default function DashboardSuperAdmin({ user }) {
   const [clients, setClients] = useState([]);
@@ -15,6 +17,9 @@ export default function DashboardSuperAdmin({ user }) {
   const [tasks, setTasks] = useState([]);
   const [orgs, setOrgs] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [editingOrg, setEditingOrg] = useState(null);
+  const [editingCompany, setEditingCompany] = useState(null);
 
   useEffect(() => {
     Promise.all([
@@ -24,10 +29,68 @@ export default function DashboardSuperAdmin({ user }) {
       base44.entities.Task.list("-created_date", 100),
       base44.entities.Organization.list("-created_date", 50),
       base44.entities.Company.list("-created_date", 100),
-    ]).then(([c, d, f, t, o, co]) => {
-      setClients(c); setDocs(d); setFilings(f); setTasks(t); setOrgs(o); setCompanies(co);
+      base44.entities.User.list("-created_date", 100),
+    ]).then(([c, d, f, t, o, co, u]) => {
+      setClients(c); setDocs(d); setFilings(f); setTasks(t); setOrgs(o); setCompanies(co); setUsers(u);
     }).catch(() => {});
   }, []);
+
+  const handleToggleOrgStatus = async (org) => {
+    const newStatus = org.status === "active" ? "suspended" : "active";
+    try {
+      await base44.entities.Organization.update(org.id, { status: newStatus });
+      setOrgs(orgs.map(o => o.id === org.id ? { ...o, status: newStatus } : o));
+      toast.success(`Organización ${newStatus === "active" ? "activada" : "suspendida"}`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteOrg = async (orgId) => {
+    if (!confirm("¿Eliminar esta organización? Se borrarán todas sus empresas asociadas.")) return;
+    try {
+      await base44.entities.Organization.delete(orgId);
+      setOrgs(orgs.filter(o => o.id !== orgId));
+      toast.success("Organización eliminada");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleToggleCompanyStatus = async (company) => {
+    const newStatus = company.status === "active" ? "suspended" : "active";
+    try {
+      await base44.entities.Company.update(company.id, { status: newStatus });
+      setCompanies(companies.map(c => c.id === company.id ? { ...c, status: newStatus } : c));
+      toast.success(`Empresa ${newStatus === "active" ? "activada" : "suspendida"}`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleDeleteCompany = async (companyId) => {
+    if (!confirm("¿Eliminar esta empresa? Se borrarán todos sus datos asociados.")) return;
+    try {
+      await base44.entities.Company.delete(companyId);
+      setCompanies(companies.filter(c => c.id !== companyId));
+      toast.success("Empresa eliminada");
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const handleToggleUserStatus = async (userId) => {
+    if (!confirm("¿Suspender/activar este usuario?")) return;
+    try {
+      const targetUser = users.find(u => u.id === userId);
+      const newRole = targetUser.role === "user" ? "suspended" : "user";
+      await base44.auth.updateMe({ role: newRole });
+      setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
+      toast.success(`Usuario ${newRole === "user" ? "activado" : "suspendido"}`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   const aiDone = docs.filter(d => ["classified","approved"].includes(d.status)).length;
   const aiPending = docs.filter(d => d.status === "uploaded").length + filings.filter(f => f.status === "draft").length;
@@ -72,13 +135,96 @@ export default function DashboardSuperAdmin({ user }) {
 
   return (
     <div>
+      {/* KPIs */}
       <div className="grid grid-cols-3 gap-2 mb-3">
         <KPICard label="Organizaciones" value={orgs.length || 28} delta={12} color="violet" icon={Building2} />
-        <KPICard label="Usuarios Activos" value={clients.length || 1248} delta={8} color="blue" icon={Users} />
+        <KPICard label="Usuarios Activos" value={users.filter(u=>u.role!=="suspended").length || 1248} delta={8} color="blue" icon={Users} />
         <KPICard label="Empresas" value={companies.length || 856} delta={15} color="indigo" icon={Building2} />
         <KPICard label="Ingresos del Mes" value={`$45.23M`} delta={22} color="green" icon={TrendingUp} />
         <KPICard label="Procesos IA" value={aiDone + aiPending || 14582} delta={-4} color="amber" icon={Bot} />
       </div>
+
+      {/* Administración de Organizaciones */}
+      <DarkCard title="Gestionar Organizaciones" icon={Building2} iconColor="text-violet-400" className="mb-3">
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {orgs.map(org => (
+            <div key={org.id} className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/5">
+              <div className="flex items-center gap-2 flex-1">
+                <div className={`w-2 h-2 rounded-full ${org.status === "active" ? "bg-emerald-400" : "bg-amber-400"}`} />
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold text-white">{org.name}</p>
+                  <p className="text-[9px] text-slate-400">{org.org_type} • {org.email}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button size="icon" variant="ghost" className="w-6 h-6 text-slate-400 hover:text-white" onClick={() => setEditingOrg(org)}>
+                  <Pencil className="w-3 h-3" />
+                </Button>
+                <Button size="icon" variant="ghost" className={`w-6 h-6 ${org.status === "active" ? "text-amber-400 hover:text-amber-300" : "text-emerald-400 hover:text-emerald-300"}`} onClick={() => handleToggleOrgStatus(org)}>
+                  {org.status === "active" ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                </Button>
+                <Button size="icon" variant="ghost" className="w-6 h-6 text-rose-400 hover:text-rose-300" onClick={() => handleDeleteOrg(org.id)}>
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DarkCard>
+
+      {/* Administración de Empresas */}
+      <DarkCard title="Gestionar Empresas" icon={Building2} iconColor="text-blue-400" className="mb-3">
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {companies.slice(0, 10).map(company => (
+            <div key={company.id} className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/5">
+              <div className="flex items-center gap-2 flex-1">
+                <div className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold text-white`} style={{ backgroundColor: company.color || "#00C7D9" }}>
+                  {(company.fantasy_name || company.business_name)[0]}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold text-white">{company.business_name}</p>
+                  <p className="text-[9px] text-slate-400">{company.cuit} • {company.company_type}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button size="icon" variant="ghost" className={`w-6 h-6 ${company.status === "active" ? "text-amber-400 hover:text-amber-300" : "text-emerald-400 hover:text-emerald-300"}`} onClick={() => handleToggleCompanyStatus(company)}>
+                  {company.status === "active" ? <Ban className="w-3 h-3" /> : <CheckCircle className="w-3 h-3" />}
+                </Button>
+                <Button size="icon" variant="ghost" className="w-6 h-6 text-rose-400 hover:text-rose-300" onClick={() => handleDeleteCompany(company.id)}>
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DarkCard>
+
+      {/* Administración de Usuarios */}
+      <DarkCard title="Gestionar Usuarios" icon={Users} iconColor="text-emerald-400" className="mb-3">
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {users.slice(0, 10).map(u => (
+            <div key={u.id} className="flex items-center justify-between p-2 bg-white/5 rounded-lg border border-white/5">
+              <div className="flex items-center gap-2 flex-1">
+                <div className="w-6 h-6 rounded-full bg-violet-500/20 flex items-center justify-center text-[10px] font-bold text-violet-300">
+                  {(u.full_name || u.email)[0].toUpperCase()}
+                </div>
+                <div className="flex-1">
+                  <p className="text-[11px] font-semibold text-white">{u.full_name || "Sin nombre"}</p>
+                  <p className="text-[9px] text-slate-400">{u.email} • <span className="text-white/50">{u.role}</span></p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1">
+                <Button size="icon" variant="ghost" className="w-6 h-6 text-blue-400 hover:text-blue-300">
+                  <Eye className="w-3 h-3" />
+                </Button>
+                <Button size="icon" variant="ghost" className="w-6 h-6 text-rose-400 hover:text-rose-300" onClick={() => handleToggleUserStatus(u.id)}>
+                  <Ban className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </DarkCard>
 
       <div className="grid grid-cols-2 gap-2 mb-3">
         <DarkCard title="Ingresos y Actividad" icon={TrendingUp} iconColor="text-violet-400">
