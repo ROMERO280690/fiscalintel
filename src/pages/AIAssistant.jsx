@@ -6,12 +6,14 @@ import PageHeader from "@/components/shared/PageHeader";
 import ReactMarkdown from "react-markdown";
 
 const quickActions = [
-  { label: "Análisis de riesgo fiscal", prompt: "Analizá el riesgo fiscal de mis clientes y generá un informe con recomendaciones." },
-  { label: "Calendario de vencimientos", prompt: "Generá el calendario de vencimientos impositivos del mes actual para Argentina." },
-  { label: "Comparar períodos IVA", prompt: "Explicame cómo comparar los períodos de IVA para detectar inconsistencias." },
-  { label: "Novedades impositivas", prompt: "¿Cuáles son las últimas novedades impositivas de Argentina que debería conocer?" },
-  { label: "Optimización tributaria", prompt: "Dame estrategias de optimización tributaria legales para PyMEs argentinas." },
-  { label: "Recategorización Monotributo", prompt: "¿Cuáles son los parámetros actuales para la recategorización del Monotributo?" },
+  { label: "📅 Vencimientos del mes", prompt: "Como contador experto en ARCA, indicame los vencimientos impositivos clave para el mes actual según el calendario fiscal vigente de ARCA (ex AFIP). Incluí IVA por terminación de CUIT, Monotributo, Autónomos, F931, anticipos de Ganancias y IIBB. Sé específico con fechas." },
+  { label: "📊 Posición IVA mensual", prompt: "Explicame paso a paso cómo determinar la posición mensual de IVA de un Responsable Inscripto en Argentina: cálculo de débito fiscal, crédito fiscal, saldo técnico, saldo de libre disponibilidad y saldo de IVA a pagar o a favor. Incluí los artículos de la Ley 23.349 que correspondan." },
+  { label: "🏢 Recategorización Monotributo", prompt: "¿Cuáles son los parámetros vigentes para la recategorización cuatrimestral del Monotributo en Argentina? Indicame los parámetros de cada categoría (facturación, alquileres, energía eléctrica, empleados), las fechas de recategorización y qué pasa si un monotributista supera los límites de la categoría H para servicios o K para venta de cosas muebles." },
+  { label: "⚖️ RI vs Monotributo", prompt: "Analizá en detalle cuándo conviene pasar de Monotributo a Responsable Inscripto en Argentina. Considerá: límites de facturación vigentes, carga fiscal comparada (IVA + Ganancias vs. cuota fija), impacto en clientes (discriminación de IVA en facturas A), trámite ante ARCA y aspectos prácticos para el contador." },
+  { label: "📝 Convenio Multilateral CM05", prompt: "Explicame el régimen de Convenio Multilateral para Ingresos Brutos en Argentina: cuándo aplica, diferencia entre CM03 y CM05, cómo se calculan los coeficientes unificados (ingresos y gastos), qué jurisdicciones corresponden, y cómo se determina la base imponible por provincia." },
+  { label: "💼 F931 y cargas sociales", prompt: "Explicame la composición del F931 (SICOSS) en Argentina: alícuotas vigentes de contribuciones patronales (23% según decreto), retenciones del trabajador (jubilación 11%, obra social 3%, ANSSAL 0,5%, contribución sindical), diferencia entre el régimen general y el régimen de PyMEs con reducción, y cómo se presenta ante ARCA." },
+  { label: "🔍 Retenciones y percepciones", prompt: "Explicame el sistema de retenciones y percepciones impositivas en Argentina: diferencias entre retenciones de IVA (RG 2854 ARCA), retenciones de Ganancias (RG 830), percepciones de IIBB y los distintos regímenes especiales. ¿Cómo se computan en la DDJJ del período?" },
+  { label: "📋 Bienes Personales 2024", prompt: "Cuáles son las novedades del impuesto a Bienes Personales para el período fiscal 2024 en Argentina? Incluí: alícuotas vigentes (tanto para bienes en el país como en el exterior), mínimo no imponible actualizado, valuación de inmuebles (VIR o valor fiscal), acciones y participaciones sociales, y el régimen de Bienes Personales para no residentes (RFCE)." },
 ];
 
 export default function AIAssistant() {
@@ -22,17 +24,37 @@ export default function AIAssistant() {
   const sendMessage = async (text) => {
     if (!text.trim()) return;
     const userMsg = { role: "user", content: text };
-    setMessages(prev => [...prev, userMsg]);
+    const currentMessages = [...messages, userMsg];
+    setMessages(currentMessages);
     setInput("");
     setLoading(true);
 
+    // Construir historial de conversación para contexto
+    const historial = currentMessages.slice(-8).map(m =>
+      `[${m.role === "user" ? "CONTADOR" : "ASISTENTE"}]: ${m.content}`
+    ).join("\n\n");
+
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sos un asistente contable experto en legislación tributaria argentina. Tu especialidad incluye: IVA, Ingresos Brutos, Monotributo, Convenio Multilateral, Ganancias, Bienes Personales, ARCA (ex AFIP), y toda la normativa impositiva argentina vigente.
+        prompt: `Sos un contador público argentino matriculado con especialización en derecho tributario y auditoría. Tenés más de 20 años de experiencia en estudios contables y asesoramiento a empresas en Argentina.
 
-Respondé de forma clara, precisa y profesional. Usá lenguaje técnico contable cuando corresponda. Si no estás seguro de algo, indicalo.
+Tu conocimiento abarca:
+- ARCA (ex AFIP): RG vigentes, sistemas SIAP, CITI, SICOSS, SICORE, RUCAP, SIRADIG, Padrones IVA
+- Impuestos nacionales: IVA (Ley 23.349), Ganancias (Ley 20.628 y reforma Ley 27.430), Bienes Personales (Ley 23.966), Monotributo (Ley 24.977), Autónomos
+- Seguridad Social: Ley 24.241 (SIJP), Ley 23.660/23.661 (obras sociales), F931/SICOSS, alícuotas patronales
+- Ingresos Brutos y Convenio Multilateral: regímenes locales y CM05
+- Normas contables profesionales: RT FACPCE, NIC/NIIF aplicables en Argentina
+- Legislación laboral: LCT (Ley 20.744), convenios colectivos, liquidación de sueldos
+- Derecho societario: Ley 19.550 (Ley General de Sociedades), actas, libros obligatorios
+- Procedimiento tributario: Ley 11.683, recurso de apelación, TFN, sanciones
+- Normativa vigente 2024/2025: Ley Bases, RIGI, blanqueo (Ley 27.743), moratoria, Ganancias 4ª categoría restitución
 
-Consulta del contador: ${text}`,
+Respondé SIEMPRE con precisión técnica contable. Citá artículos de ley, resoluciones generales y resoluciones normativas cuando sea relevante. Usá formato Markdown con secciones claras, tablas cuando corresponda, y notas de advertencia (⚠️) para riesgos fiscales. Si la consulta involucra un cálculo, mostrá los números paso a paso. Si hay jurisprudencia relevante del Tribunal Fiscal de la Nación (TFN) o la CSJN, mencionala.
+
+Historial de la consulta:
+${historial}
+
+Respondé la última consulta del CONTADOR manteniendo el contexto de la conversación anterior.`,
         add_context_from_internet: true,
         model: "gemini_3_flash",
       });
@@ -54,11 +76,14 @@ Consulta del contador: ${text}`,
             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#00C7D9] to-[#00A8BD] flex items-center justify-center mb-4">
               <Sparkles className="w-8 h-8 text-white" />
             </div>
-            <h3 className="text-base font-bold text-[#1A1A2E] mb-1">Asistente IA Tributario</h3>
-            <p className="text-[13px] text-slate-500 text-center max-w-sm mb-6">
-              Consultá sobre normativa fiscal argentina, estrategias tributarias, vencimientos y más.
+            <h3 className="text-base font-bold text-[#1A1A2E] mb-1">Asistente Contable IA</h3>
+            <p className="text-[13px] text-slate-500 text-center max-w-sm mb-1">
+              Especializado en normativa ARCA · IVA · Ganancias · IIBB · Sueldos · Sociedades
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-lg">
+            <p className="text-[11px] text-slate-400 text-center mb-6">
+              ⚠️ Las respuestas son orientativas. Siempre verificá con la normativa vigente.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full max-w-2xl">
               {quickActions.map((action, i) => (
                 <button
                   key={i}

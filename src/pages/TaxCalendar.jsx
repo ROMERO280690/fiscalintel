@@ -16,7 +16,13 @@ const obligationLabels = {
   municipal: "Municipal", otro: "Otro"
 };
 
-const CURRENT_MONTH = new Date().toLocaleDateString("es-AR", { month: "2-digit", year: "numeric" });
+const now = new Date();
+const CURRENT_MONTH = `${String(now.getMonth() + 1).padStart(2, "0")}/${now.getFullYear()}`;
+const MONTH_LABEL = now.toLocaleDateString("es-AR", { month: "long", year: "numeric" });
+const NEXT_MONTH = (() => {
+  const d = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  return `${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
+})();
 
 export default function TaxCalendar() {
   const [deadlines, setDeadlines] = useState([]);
@@ -58,18 +64,33 @@ export default function TaxCalendar() {
   const generateForAllClients = async () => {
     setGenerating(true);
     try {
+      const periodoLabel = MONTH_LABEL;
+      const yearActual = now.getFullYear();
+      const mesActual = now.getMonth() + 1;
+      const mesNext = mesActual === 12 ? 1 : mesActual + 1;
+      const yearNext = mesActual === 12 ? yearActual + 1 : yearActual;
+      const pad = (n) => String(n).padStart(2, "0");
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sos un especialista tributario argentino. Generá los vencimientos impositivos para el mes de Julio 2026 según el calendario fiscal de ARCA.
+        prompt: `Sos un contador público argentino experto en ARCA (ex AFIP). Generá los vencimientos impositivos para el período ${periodoLabel} según el calendario fiscal de ARCA vigente.
 
-Para cada tipo de contribuyente, indicá las obligaciones y sus fechas de vencimiento aproximadas en Julio 2026:
-- IVA mensual (responsables inscriptos): según terminación de CUIT
-- Monotributo: día 20 del mes siguiente
-- Autónomos: día 3 del mes siguiente  
-- F931 (sueldos): día 7 del mes siguiente
-- Ganancias (anticipos): según calendario
-- IIBB: según jurisdicción, aproximadamente día 15-25
+El período a considerar es: ${CURRENT_MONTH}
 
-Respondé con un array de obligaciones genéricas para el mes.`,
+Las fechas de vencimiento deben estar en el formato YYYY-MM-DD y corresponder al año ${yearActual} o ${yearNext} según corresponda.
+
+Reglas de vencimiento vigentes según normativa ARCA:
+1. IVA mensual (Responsables Inscriptos): vence en el mes siguiente al período, entre los días 12 y 22 según la terminación del CUIT (0-1: día 12; 2-3: día 13; 4-5: día 14; 6-7: día 15; 8-9: día 16). Si cae en feriado o fin de semana, el siguiente día hábil.
+2. Monotributo: vence el día 20 del mes en curso (pago mensual de la cuota).
+3. Autónomos: vence el día 3 del mes siguiente al período.
+4. F931 (SICOSS - empleadores): vence el día 7 del mes siguiente al período. Si hay menos de 10 empleados, vence el día 7; si tiene 10 o más empleados, puede variar por terminación de CUIT pero generalmente entre 7 y 10.
+5. Anticipos de Ganancias personas físicas: vence el día 20 del mes (cuotas mensuales junio-febrero).
+6. Bienes Personales (anticipo): si corresponde al período, día 22 del mes siguiente.
+7. IIBB local (AGIP, ARBA, etc.): aproximadamente entre los días 15 y 25 del mes siguiente, varía por jurisdicción.
+8. Convenio Multilateral CM03: vence el último día hábil del mes siguiente al período.
+
+Generá las obligaciones con fechas EXACTAS en formato YYYY-MM-DD para el año ${yearNext}, mes ${pad(mesNext)}.
+
+Respondé SOLO con el JSON, sin texto adicional.`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -130,7 +151,7 @@ Respondé con un array de obligaciones genéricas para el mes.`,
         <div className="flex gap-2">
           <Button onClick={generateForAllClients} disabled={generating} variant="outline" className="text-xs">
             {generating ? <Loader2 className="w-3.5 h-3.5 mr-1 animate-spin" /> : <Bot className="w-3.5 h-3.5 mr-1" />}
-            IA: Generar Julio
+            IA: Generar {MONTH_LABEL}
           </Button>
           <Button onClick={() => setShowForm(true)} className="bg-[#00C7D9] hover:bg-[#00A8BD] text-white text-xs">
             <Plus className="w-3.5 h-3.5 mr-1" /> Nuevo Vencimiento

@@ -18,6 +18,19 @@ const invoiceTypeLabels = {
 
 const ivaRates = [0, 10.5, 21, 27];
 
+// Regla ARCA: tipo de comprobante según categoría del emisor
+const COMPROBANTE_RULES = {
+  factura_a: "Solo puede emitir Factura A un Responsable Inscripto a otro RI. Discrimina IVA.",
+  factura_b: "Factura B: RI a Consumidor Final, Monotributista o Exento. IVA incluido en el precio.",
+  factura_c: "Factura C: emitida por Monotributistas, Autónomos o Exentos. Sin discriminación de IVA.",
+  factura_m: "Factura M: RI con limitación de crédito fiscal. Sujeta a retención del 100% de IVA (RG ARCA 1575).",
+  factura_e: "Factura E: exportaciones de bienes o servicios. Alícuota IVA 0% (operación exenta por Ley 23.349 art. 8).",
+  nota_credito_a: "NC A: ajuste sobre Factura A. Solo entre RI.",
+  nota_credito_b: "NC B: ajuste sobre Factura B.",
+  nota_debito_a: "ND A: cargo adicional sobre Factura A.",
+  nota_debito_b: "ND B: cargo adicional sobre Factura B.",
+};
+
 function InvoiceForm({ clients, invoice, onSave, onClose }) {
   const [form, setForm] = useState(invoice || {
     client_id: "", invoice_type: "factura_b", date: new Date().toISOString().split("T")[0],
@@ -73,6 +86,12 @@ function InvoiceForm({ clients, invoice, onSave, onClose }) {
               </select>
             </div>
           </div>
+
+          {COMPROBANTE_RULES[form.invoice_type] && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+              <p className="text-[11px] text-blue-700">📋 {COMPROBANTE_RULES[form.invoice_type]}</p>
+            </div>
+          )}
 
           <div className="grid grid-cols-3 gap-3">
             <div>

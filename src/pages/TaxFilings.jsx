@@ -61,13 +61,37 @@ export default function TaxFilings() {
         category: filing.filing_type === "iva" ? "iva_compras" : filing.filing_type,
       });
 
+      // Separar comprobantes de ventas (débito fiscal) y compras (crédito fiscal)
+      const ventaDocs = docs.filter(d => d.category === "iva_ventas");
+      const compraDocs = docs.filter(d => d.category === "iva_compras");
+      const totalVentas = ventaDocs.reduce((s, d) => s + (d.net_amount || d.amount || 0), 0);
+      const totalIVAVentas = ventaDocs.reduce((s, d) => s + (d.tax_amount || 0), 0);
+      const totalCompras = compraDocs.reduce((s, d) => s + (d.net_amount || d.amount || 0), 0);
+      const totalIVACompras = compraDocs.reduce((s, d) => s + (d.tax_amount || 0), 0);
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sos un contador argentino experto. Generá un resumen de la declaración jurada de ${filingTypeLabels[filing.filing_type]} para el período ${filing.period}. 
-        Cliente: ${filing.client_name}. 
-        Documentos disponibles: ${docs.length} comprobantes.
-        ${docs.length > 0 ? `Montos totales: Débito $${docs.reduce((s, d) => s + (d.amount || 0), 0).toLocaleString("es-AR")}, IVA $${docs.reduce((s, d) => s + (d.tax_amount || 0), 0).toLocaleString("es-AR")}` : ""}
-        
-        Calculá débito fiscal, crédito fiscal e impuesto a pagar. Identificá riesgos o inconsistencias. Respondé en JSON.`,
+        prompt: `Sos un contador público argentino matriculado, experto en ARCA (ex AFIP). Calculá la DDJJ de ${filingTypeLabels[filing.filing_type]} para el período ${filing.period}.
+
+Cliente: ${filing.client_name}
+
+Datos del período:
+- Comprobantes de VENTAS: ${ventaDocs.length} documentos
+  · Neto gravado ventas: $${totalVentas.toLocaleString("es-AR")}
+  · IVA débito fiscal (ventas): $${totalIVAVentas.toLocaleString("es-AR")}
+- Comprobantes de COMPRAS: ${compraDocs.length} documentos
+  · Neto gravado compras: $${totalCompras.toLocaleString("es-AR")}
+  · IVA crédito fiscal (compras): $${totalIVACompras.toLocaleString("es-AR")}
+- Total de comprobantes procesados: ${docs.length}
+
+Aplicá la mecánica correcta según Ley 23.349:
+1. Débito fiscal = suma de IVA facturado en ventas del período
+2. Crédito fiscal = IVA de compras vinculadas con la actividad gravada (considerar proporcionalidad si hay operaciones exentas)
+3. Saldo técnico = Débito Fiscal - Crédito Fiscal
+4. Si hay saldo a favor del período anterior, computarlo
+5. Posición IVA = impuesto a pagar o saldo a favor (técnico o libre disponibilidad)
+6. Identificar riesgos: facturas de proveedores sin CAE válido, diferencias entre débito declarado y percibido por ARCA, inconsistencias con padrones IVA (RG 2854)
+
+Devolvé los cálculos exactos y un análisis profesional de la posición fiscal.`,
         response_json_schema: {
           type: "object",
           properties: {
