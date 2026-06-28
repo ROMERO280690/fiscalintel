@@ -146,12 +146,12 @@ export default function Onboarding() {
                     <select
                       value={orgData.org_type}
                       onChange={(e) => setOrgData({ ...orgData, org_type: e.target.value })}
-                      className="mt-1 w-full h-10 px-3 rounded-md border border-white/10 bg-white/5 text-white text-sm"
+                      className="mt-1 w-full h-10 px-3 rounded-md border border-white/10 bg-[#1A1A2E] text-white text-sm"
                     >
-                      <option value="estudio_contable">Estudio Contable</option>
-                      <option value="grupo_economico">Grupo Económico</option>
-                      <option value="empresa_independiente">Empresa Independiente</option>
-                      <option value="holding">Holding</option>
+                      <option value="estudio_contable" className="bg-[#1A1A2E] text-white">Estudio Contable</option>
+                      <option value="grupo_economico" className="bg-[#1A1A2E] text-white">Grupo Económico</option>
+                      <option value="empresa_independiente" className="bg-[#1A1A2E] text-white">Empresa Independiente</option>
+                      <option value="holding" className="bg-[#1A1A2E] text-white">Holding</option>
                     </select>
                   </div>
                   <div>
@@ -246,10 +246,10 @@ export default function Onboarding() {
                     <select
                       value={companyData.company_type}
                       onChange={(e) => setCompanyData({ ...companyData, company_type: e.target.value })}
-                      className="mt-1 w-full h-10 px-3 rounded-md border border-white/10 bg-white/5 text-white text-sm"
+                      className="mt-1 w-full h-10 px-3 rounded-md border border-white/10 bg-[#1A1A2E] text-white text-sm"
                     >
                       {COMPANY_TYPES.map((t) => (
-                        <option key={t.value} value={t.value}>{t.label}</option>
+                        <option key={t.value} value={t.value} className="bg-[#1A1A2E] text-white">{t.label}</option>
                       ))}
                     </select>
                   </div>
