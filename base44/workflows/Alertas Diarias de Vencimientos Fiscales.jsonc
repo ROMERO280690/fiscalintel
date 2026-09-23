@@ -1,0 +1,44 @@
+{
+  "name": "Alertas Diarias de Vencimientos Fiscales",
+  "description": "Revisa todos los vencimientos fiscales pendientes cada ma\u00f1ana y env\u00eda emails + notificaciones in-app al contador y cliente cuando quedan 15, 7, 3, 1 d\u00edas o est\u00e1 vencido.",
+  "trigger": {
+    "condition": null,
+    "config": {
+      "trigger_type": "scheduled",
+      "events": [],
+      "schedule_mode": "recurring",
+      "cron_expression": "0 11 * * *",
+      "one_time_date": null,
+      "timezone": "UTC",
+      "interval_value": null,
+      "interval_unit": null,
+      "interval_anchor": null,
+      "ends_type": "never",
+      "ends_on_date": null,
+      "ends_after_count": null
+    }
+  },
+  "definition": {
+    "document": {
+      "dsl": "1.0.0",
+      "name": "alertas_diarias_de_vencimientos_fiscales",
+      "version": "1.0",
+      "namespace": "base44"
+    },
+    "do": [
+      {
+        "run_function": {
+          "call": "invoke_backend_function",
+          "with": {
+            "function_name": "checkTaxDeadlines",
+            "args": {}
+          },
+          "then": "end"
+        }
+      }
+    ]
+  },
+  "x-base44-migrated-from-automation": {
+    "legacy_payload_function": "checkTaxDeadlines"
+  }
+}
